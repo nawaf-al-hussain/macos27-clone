@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@275;300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
@@ -12,10 +12,32 @@
 }
 
 :root {
-  --macos-glass-bg: rgba(255, 255, 255, 0.15);
-  --macos-glass-bg-heavy: rgba(255, 255, 255, 0.25);
-  --macos-glass-border: rgba(255, 255, 255, 0.2);
-  --macos-glass-blur: 40px;
+  /* Z-index layers */
+  --z-desktop: 100;
+  --z-menubar: 9000;
+  --z-dock: 9500;
+  --z-appswitcher: 9600;
+  --z-lock: 10000;
+  --z-boot: 11000;
+
+  /* iOS easing */
+  --ease-ios: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Liquid Glass base */
+  --lg-bg: rgba(255, 255, 255, 0.15);
+  --lg-bg-heavy: rgba(255, 255, 255, 0.25);
+  --lg-border: rgba(255, 255, 255, 0.2);
+  --lg-blur: 40px;
+
+  /* Window shadows */
+  --lg-shadow-window: 0 0 0 0.5px rgba(0,0,0,0.3), 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.15);
+  --lg-shadow-window-inactive: 0 0 0 0.5px rgba(0,0,0,0.2), 0 10px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08);
+
+  /* Legacy aliases */
+  --macos-glass-bg: var(--lg-bg);
+  --macos-glass-bg-heavy: var(--lg-bg-heavy);
+  --macos-glass-border: var(--lg-border);
+  --macos-glass-blur: var(--lg-blur);
   --macos-window-radius: 12px;
   --macos-menubar-height: 28px;
   --macos-dock-height: 68px;
@@ -49,20 +71,142 @@
   }
 }
 
-/* Liquid Glass SVG filter is defined inline in components */
+/* ===== Keyframe Animations ===== */
 
-/* Dock magnification */
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes bootFill {
+  0% { width: 0%; }
+  55% { width: 65%; }
+  68% { width: 65%; }
+  100% { width: 100%; }
+}
+
+@keyframes pulseOpacity {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+@keyframes widgetIn {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes lockFadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; pointer-events: none; }
+}
+
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes notifSlide {
+  0% { opacity: 0; transform: translateX(100%); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes spotlightIn {
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ===== Liquid Glass Styles ===== */
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(50px);
+  -webkit-backdrop-filter: blur(50px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: var(--lg-shadow-window);
+}
+
+.glass-banner {
+  border-radius: var(--radius-notification, 16px);
+  backdrop-filter: blur(28px) saturate(170%);
+  -webkit-backdrop-filter: blur(28px) saturate(170%);
+  background: rgba(248, 248, 250, 0.78);
+  box-shadow: 0 10px 32px rgba(0,0,0,0.2);
+}
+
+.glass-menu {
+  background: rgba(40, 40, 40, 0.65);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-dock {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.1), 0 8px 40px rgba(0, 0, 0, 0.4);
+}
+
+.glass-spotlight {
+  background: rgba(40, 40, 40, 0.8);
+  backdrop-filter: blur(60px);
+  -webkit-backdrop-filter: blur(60px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.6);
+}
+
+/* ===== Legacy Glass Utilities ===== */
+
+.glass {
+  background: var(--macos-glass-bg);
+  backdrop-filter: blur(var(--macos-glass-blur));
+  -webkit-backdrop-filter: blur(var(--macos-glass-blur));
+  border: 1px solid var(--macos-glass-border);
+}
+
+.glass-heavy {
+  background: var(--macos-glass-bg-heavy);
+  backdrop-filter: blur(var(--macos-glass-blur));
+  -webkit-backdrop-filter: blur(var(--macos-glass-blur));
+  border: 1px solid var(--macos-glass-border);
+}
+
+/* ===== Lock Screen ===== */
+
+.lock-fade-out {
+  animation: lockFadeOut 0.8s ease forwards;
+}
+
+/* ===== Utility Animations ===== */
+
+.slide-up {
+  animation: slideUp 0.3s ease forwards;
+}
+
+.notification-slide {
+  animation: notifSlide 0.3s ease forwards;
+}
+
+.spotlight-enter {
+  animation: spotlightIn 0.2s ease forwards;
+}
+
+/* ===== Dock ===== */
+
 .dock-item {
   transition: transform 0.15s ease, margin 0.15s ease;
   will-change: transform;
 }
 
-/* Window dragging */
+/* ===== Window ===== */
+
 .window-body {
   overflow: hidden;
 }
 
-/* Scrollbar styling */
+/* ===== Scrollbar ===== */
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -78,62 +222,8 @@
   background: rgba(255,255,255,0.35);
 }
 
-/* Glass morphism utility */
-.glass {
-  background: var(--macos-glass-bg);
-  backdrop-filter: blur(var(--macos-glass-blur));
-  -webkit-backdrop-filter: blur(var(--macos-glass-blur));
-  border: 1px solid var(--macos-glass-border);
-}
+/* ===== Music ===== */
 
-.glass-heavy {
-  background: var(--macos-glass-bg-heavy);
-  backdrop-filter: blur(var(--macos-glass-blur));
-  -webkit-backdrop-filter: blur(var(--macos-glass-blur));
-  border: 1px solid var(--macos-glass-border);
-}
-
-/* Animation for lock screen */
-.lock-fade-out {
-  animation: lockFadeOut 0.8s ease forwards;
-}
-
-@keyframes lockFadeOut {
-  0% { opacity: 1; }
-  100% { opacity: 0; pointer-events: none; }
-}
-
-/* Slide up animation */
-.slide-up {
-  animation: slideUp 0.3s ease forwards;
-}
-
-@keyframes slideUp {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-/* Notification slide */
-.notification-slide {
-  animation: notifSlide 0.3s ease forwards;
-}
-
-@keyframes notifSlide {
-  0% { opacity: 0; transform: translateX(100%); }
-  100% { opacity: 1; transform: translateX(0); }
-}
-
-/* Spotlight animation */
-.spotlight-enter {
-  animation: spotlightIn 0.2s ease forwards;
-}
-
-@keyframes spotlightIn {
-  0% { opacity: 0; transform: scale(0.95); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-/* Music progress bar */
 input[type="range"].music-progress {
   -webkit-appearance: none;
   appearance: none;
@@ -151,7 +241,8 @@ input[type="range"].music-progress::-webkit-slider-thumb {
   cursor: pointer;
 }
 
-/* Context menu */
+/* ===== Context Menu ===== */
+
 .context-menu {
   background: rgba(40, 40, 40, 0.85);
   backdrop-filter: blur(40px);
