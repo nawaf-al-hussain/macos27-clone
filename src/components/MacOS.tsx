@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
+import BootScreen from '@/components/BootScreen';
 import LockScreen from '@/components/LockScreen';
 import MenuBar from '@/components/MenuBar';
 import Dock from '@/components/Dock';
+import DesktopWidgets from '@/components/DesktopWidgets';
 import Window from '@/components/Window';
 import ControlCenter from '@/components/ControlCenter';
 import Notifications from '@/components/Notifications';
@@ -31,6 +33,8 @@ import Games from '@/apps/Games';
 import AppStore from '@/apps/AppStore';
 import SystemSettings from '@/apps/SystemSettings';
 import Downloads from '@/apps/Downloads';
+
+type Phase = 'boot' | 'lock' | 'desktop';
 
 const APP_NAMES: Record<string, string> = {
   finder: 'Finder',
@@ -88,8 +92,9 @@ function AppContent({ appId }: { appId: string }) {
 }
 
 export default function MacOS() {
-  const [isLocked, setIsLocked] = useState(true);
-  const [fadeOut, setFadeOut] = useState(false);
+  const [phase, setPhase] = useState<Phase>('boot');
+  const [unlocking, setUnlocking] = useState(false);
+  const [desktopVisible, setDesktopVisible] = useState(false);
   const [showControlCenter, setShowControlCenter] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showSpotlight, setShowSpotlight] = useState(false);
@@ -109,11 +114,16 @@ export default function MacOS() {
 
   const activeApp = windows.find(w => w.id === activeWindowId)?.appId || 'Finder';
 
+  const handleBootDone = useCallback(() => {
+    setPhase('lock');
+  }, []);
+
   const handleUnlock = useCallback(() => {
-    setFadeOut(true);
+    setUnlocking(true);
     setTimeout(() => {
-      setIsLocked(false);
-      setFadeOut(false);
+      setPhase('desktop');
+      setUnlocking(false);
+      setDesktopVisible(true);
       // Open Finder by default
       openWindow('finder', 'Finder');
     }, 700);
@@ -126,6 +136,7 @@ export default function MacOS() {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (phase !== 'desktop') return;
       if ((e.metaKey || e.ctrlKey) && e.key === ' ') {
         e.preventDefault();
         setShowSpotlight(prev => !prev);
@@ -138,7 +149,7 @@ export default function MacOS() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showSpotlight, showControlCenter, showNotifications]);
+  }, [phase, showSpotlight, showControlCenter, showNotifications]);
 
   return (
     <div className="relative w-full h-full overflow-hidden" style={{ background: '#000' }}>
@@ -153,26 +164,38 @@ export default function MacOS() {
         </defs>
       </svg>
 
-      {/* Wallpaper */}
+      {/* Wallpaper (always rendered underneath) */}
       <div
         className="absolute inset-0"
         style={{
           backgroundImage: 'url(/images/wallpaper-tahoe-day.jpg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
+          zIndex: 'var(--z-desktop)',
         }}
       />
 
-      {/* Lock Screen */}
-      {isLocked && (
-        <div className={fadeOut ? 'lock-fade-out' : ''}>
-          <LockScreen onUnlock={handleUnlock} />
-        </div>
+      {/* Boot Screen */}
+      {phase === 'boot' && (
+        <BootScreen onDone={handleBootDone} />
       )}
 
-      {/* Desktop */}
-      {!isLocked && (
-        <>
+      {/* Lock Screen */}
+      {phase === 'lock' && (
+        <LockScreen onUnlock={handleUnlock} unlocking={unlocking} />
+      )}
+
+      {/* Desktop (fade in on transition) */}
+      {phase === 'desktop' && (
+        <div
+          style={{
+            opacity: desktopVisible ? 1 : 0,
+            transition: 'opacity 400ms var(--ease-ios)',
+          }}
+        >
+          {/* Desktop Widgets */}
+          <DesktopWidgets />
+
           {/* Menu Bar */}
           <MenuBar
             activeApp={APP_NAMES[activeApp] || 'Finder'}
@@ -230,7 +253,7 @@ export default function MacOS() {
               onOpenApp={handleOpenApp}
             />
           )}
-        </>
+        </div>
       )}
     </div>
   );
