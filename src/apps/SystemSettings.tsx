@@ -186,8 +186,8 @@ export default function SystemSettings() {
                     }`}
                     style={{
                       background: c.color,
-                      ringColor: c.color,
-                    }}
+                      ['--tw-ring-color' as string]: c.color,
+                    } as React.CSSProperties}
                     onClick={() => setSelectedAccent(c.name)}
                   >
                     {selectedAccent === c.name && (
