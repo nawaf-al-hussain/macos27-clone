@@ -3,101 +3,126 @@
 import { useState } from 'react';
 
 export default function Maps() {
-  const [searchQuery, setSearchQuery] = useState('Apple Park, Cupertino');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSidebar, setShowSidebar] = useState(true);
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Search Bar */}
-      <div className="flex items-center gap-2 px-3 py-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <div className="flex-1 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/8">
-          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5">
-            <circle cx="6" cy="6" r="4.5"/><line x1="9.5" y1="9.5" x2="13" y2="13" strokeLinecap="round"/>
-          </svg>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            className="flex-1 bg-transparent text-[13px] text-white/80 outline-none placeholder:text-white/25"
-            placeholder="Search Maps"
-          />
-        </div>
-      </div>
-
-      {/* Map View */}
-      <div className="flex-1 relative overflow-hidden" style={{ background: '#1a2a1a' }}>
-        {/* Simulated Map */}
-        <div className="absolute inset-0">
-          <svg width="100%" height="100%" viewBox="0 0 800 500" className="opacity-80">
-            {/* Water */}
-            <rect width="800" height="500" fill="#1a3a4a"/>
-            {/* Land masses */}
-            <path d="M0,200 Q100,180 200,220 T400,200 T600,230 T800,210 L800,500 L0,500Z" fill="#1e3e2e" opacity="0.8"/>
-            <path d="M0,300 Q150,280 300,320 T500,300 T700,330 L800,320 L800,500 L0,500Z" fill="#1a3528" opacity="0.6"/>
-
-            {/* Roads */}
-            <line x1="100" y1="0" x2="100" y2="500" stroke="#3a5a4a" strokeWidth="2"/>
-            <line x1="300" y1="0" x2="300" y2="500" stroke="#3a5a4a" strokeWidth="2"/>
-            <line x1="500" y1="0" x2="500" y2="500" stroke="#3a5a4a" strokeWidth="2"/>
-            <line x1="700" y1="0" x2="700" y2="500" stroke="#3a5a4a" strokeWidth="2"/>
-            <line x1="0" y1="100" x2="800" y2="100" stroke="#3a5a4a" strokeWidth="2"/>
-            <line x1="0" y1="250" x2="800" y2="250" stroke="#3a5a4a" strokeWidth="2"/>
-            <line x1="0" y1="400" x2="800" y2="400" stroke="#3a5a4a" strokeWidth="2"/>
-
-            {/* Major roads */}
-            <line x1="0" y1="180" x2="800" y2="180" stroke="#4a6a5a" strokeWidth="3"/>
-            <line x1="400" y1="0" x2="400" y2="500" stroke="#4a6a5a" strokeWidth="3"/>
-
-            {/* Apple Park Ring */}
-            <circle cx="400" cy="250" r="60" fill="none" stroke="#2a5a3a" strokeWidth="4"/>
-            <circle cx="400" cy="250" r="55" fill="#1e4a2e" opacity="0.5"/>
-
-            {/* Buildings */}
-            <rect x="150" y="120" width="30" height="25" rx="2" fill="#2a4a3a" opacity="0.7"/>
-            <rect x="220" y="280" width="25" height="35" rx="2" fill="#2a4a3a" opacity="0.7"/>
-            <rect x="550" y="150" width="40" height="30" rx="2" fill="#2a4a3a" opacity="0.7"/>
-            <rect x="620" y="320" width="35" height="25" rx="2" fill="#2a4a3a" opacity="0.7"/>
-
-            {/* Park label */}
-            <text x="400" y="255" textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="10" fontFamily="Inter">Apple Park</text>
-
-            {/* Location Pin */}
-            <g transform="translate(400, 210)">
-              <ellipse cx="0" cy="20" rx="8" ry="3" fill="rgba(0,0,0,0.3)"/>
-              <path d="M0,-15 A10,10,0,1,1,0,5 C0,5,-10,10,-10,15 A10,10,0,0,0,10,15 C10,10,0,5,0,5Z" fill="#007aff"/>
-              <circle cx="0" cy="-5" r="4" fill="white"/>
-            </g>
-          </svg>
-        </div>
-
-        {/* Floating Info Card */}
+    <div className="flex h-full">
+      {/* Sidebar */}
+      {showSidebar && (
         <div
-          className="absolute bottom-4 left-4 w-[240px] rounded-xl p-3"
+          className="w-[200px] shrink-0 flex flex-col"
           style={{
-            background: 'rgba(30,30,30,0.85)',
-            backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255,255,255,0.12)',
+            background: 'rgba(255,255,255,0.04)',
+            borderRight: '1px solid rgba(255,255,255,0.06)',
           }}
         >
-          <div className="text-[14px] font-medium text-white/90 mb-1">Apple Park</div>
-          <div className="text-[12px] text-white/50 mb-2">One Apple Park Way, Cupertino, CA</div>
-          <div className="flex gap-2">
-            <button className="flex-1 text-center py-1.5 rounded-lg bg-blue-500 text-[12px] text-white font-medium">
-              Directions
-            </button>
-            <button className="flex-1 text-center py-1.5 rounded-lg bg-white/10 text-[12px] text-white/80">
-              Share
-            </button>
+          <div className="p-3">
+            <div className="flex items-center gap-2 px-2 py-1.5 rounded-md bg-white/5">
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5">
+                <circle cx="6" cy="6" r="4.5"/><line x1="9.5" y1="9.5" x2="13" y2="13" strokeLinecap="round"/>
+              </svg>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Search Maps"
+                className="flex-1 bg-transparent text-[12px] text-white/80 outline-none placeholder:text-white/25"
+              />
+            </div>
+          </div>
+          <div className="flex-1 overflow-y-auto px-2">
+            <div className="text-[11px] font-semibold text-white/30 uppercase tracking-wide px-2 mb-1">Favorites</div>
+            {['Home', 'Work', 'Apple Park'].map((place, i) => (
+              <button
+                key={place}
+                className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-[13px] text-left transition-colors ${
+                  i === 2 ? 'bg-white/12 text-white' : 'text-white/70 hover:bg-white/6'
+                }`}
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M7 1C4.79 1 3 2.79 3 5c0 3.5 4 7.5 4 7.5s4-4 4-7.5C11 2.79 9.21 1 7 1z" fill={i === 2 ? '#007aff' : 'rgba(255,255,255,0.5)'}/>
+                  <circle cx="7" cy="5" r="1.5" fill="white"/>
+                </svg>
+                <span className="truncate">{place}</span>
+              </button>
+            ))}
+            <div className="text-[11px] font-semibold text-white/30 uppercase tracking-wide px-2 mb-1 mt-3">Recents</div>
+            {['Starbucks, Cupertino', 'Whole Foods, Sunnyvale'].map(place => (
+              <button
+                key={place}
+                className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-[13px] text-left text-white/70 hover:bg-white/6 transition-colors"
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <circle cx="7" cy="7" r="6" stroke="rgba(255,255,255,0.3)" strokeWidth="1"/>
+                  <path d="M5 7l1.5 1.5L9 5.5" stroke="rgba(255,255,255,0.4)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span className="truncate">{place}</span>
+              </button>
+            ))}
           </div>
         </div>
+      )}
 
-        {/* Zoom Controls */}
+      {/* Map Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Toolbar */}
         <div
-          className="absolute right-4 top-4 flex flex-col rounded-lg overflow-hidden"
-          style={{ background: 'rgba(30,30,30,0.85)', border: '1px solid rgba(255,255,255,0.12)' }}
+          className="flex items-center gap-2 px-3 py-1.5 shrink-0"
+          style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
         >
-          <button className="px-3 py-2 text-white/70 hover:bg-white/10 text-[16px]">+</button>
-          <div className="h-px bg-white/10" />
-          <button className="px-3 py-2 text-white/70 hover:bg-white/10 text-[16px]">−</button>
+          {/* Standard/Satellite toggle */}
+          <div className="flex items-center gap-0.5 bg-white/5 rounded-md p-0.5">
+            <button className="px-2 py-0.5 rounded text-[11px] bg-white/15 text-white">Standard</button>
+            <button className="px-2 py-0.5 rounded text-[11px] text-white/40 hover:text-white/60">Satellite</button>
+          </div>
+
+          <div className="flex-1" />
+
+          {/* Zoom */}
+          <button className="p-1 rounded hover:bg-white/10 text-white/60">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="7" y1="3" x2="7" y2="11"/><line x1="3" y1="7" x2="11" y2="7"/></svg>
+          </button>
+          <button className="p-1 rounded hover:bg-white/10 text-white/60">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="3" y1="7" x2="11" y2="7"/></svg>
+          </button>
+
+          {/* Go Home */}
+          <button className="p-1 rounded hover:bg-white/10 text-white/60">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M7 2L2 6h2v5h6V6h2L7 2z" strokeLinejoin="round"/>
+            </svg>
+          </button>
+
+          {/* Toggle sidebar */}
+          <button
+            className="p-1 rounded hover:bg-white/10 text-white/60"
+            onClick={() => setShowSidebar(!showSidebar)}
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <rect x="1" y="1" width="12" height="12" rx="2"/>
+              <line x1="5" y1="1" x2="5" y2="13"/>
+            </svg>
+          </button>
+        </div>
+
+        {/* Map Content */}
+        <div className="flex-1 relative overflow-hidden" style={{ background: '#1a2a1a' }}>
+          <iframe
+            src="https://www.openstreetmap.org/export/embed.html?bbox=-122.06,-37.35,-121.93,-37.28&layer=mapnik&marker=-122.00,-37.32"
+            className="absolute inset-0 w-full h-full border-0"
+            style={{ filter: 'brightness(0.85) contrast(1.1)' }}
+            title="Map"
+          />
+
+          {/* Map footer */}
+          <div
+            className="absolute bottom-0 left-0 right-0 px-3 py-1.5 text-[10px] text-white/30 flex items-center justify-between"
+            style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(10px)' }}
+          >
+            <span>Report a problem</span>
+            <span>© OpenStreetMap contributors</span>
+          </div>
         </div>
       </div>
     </div>

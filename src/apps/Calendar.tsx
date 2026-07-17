@@ -2,119 +2,186 @@
 
 import { useState } from 'react';
 
-const EVENTS = [
-  { id: '1', time: '9:00 AM', title: 'Team Standup', duration: '15m', color: '#007aff' },
-  { id: '2', time: '10:00 AM', title: 'Sprint Planning', duration: '1h', color: '#ff9500' },
-  { id: '3', time: '11:30 AM', title: 'Design Review', duration: '30m', color: '#5856d6' },
-  { id: '4', time: '1:00 PM', title: 'Lunch with Craig', duration: '1h', color: '#34c759' },
-  { id: '5', time: '2:30 PM', title: '1:1 with Jony', duration: '30m', color: '#ff2d55' },
-  { id: '6', time: '3:30 PM', title: 'Send brand review feedback', duration: '1h', color: '#ff3b30' },
-  { id: '7', time: '5:00 PM', title: 'WWDC Prep Meeting', duration: '45m', color: '#007aff' },
-];
+const DAY_HEADERS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const VIEW_BUTTONS = ['Day', 'Week', 'Month', 'Year'];
+
+// Event dots: date -> color
+const EVENT_DOTS: Record<number, string[]> = {
+  2: ['#007aff', '#ff9500'],
+  5: ['#34c759'],
+  7: ['#ff2d55'],
+  8: ['#5856d6', '#007aff'],
+  10: ['#ff9500'],
+  12: ['#34c759', '#ff2d55'],
+  14: ['#007aff'],
+  15: ['#ff9500'],
+  17: ['#007aff', '#34c759', '#ff2d55'], // Today
+  19: ['#5856d6'],
+  21: ['#ff9500', '#007aff'],
+  23: ['#34c759'],
+  25: ['#ff2d55'],
+  27: ['#5856d6', '#ff9500'],
+  29: ['#007aff'],
+  30: ['#34c759'],
+};
+
+// July 2026: starts on Wednesday (day 3), 31 days
+// June 29, 30 overflow
+// August 1-8 overflow
+
+const PREV_MONTH_DAYS = [29, 30]; // June
+const DAYS_IN_MONTH = 31;
+const START_DAY = 3; // Wednesday
+const NEXT_MONTH_DAYS = [1, 2, 3, 4, 5, 6, 7, 8]; // August
+const TODAY = 17;
 
 export default function Calendar() {
-  const now = new Date();
-  const [currentMonth, setCurrentMonth] = useState(now.getMonth());
-  const [currentYear, setCurrentYear] = useState(now.getFullYear());
-  const [selectedDate, setSelectedDate] = useState(now.getDate());
-
-  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const today = now.getDate();
-  const isCurrentMonth = currentMonth === now.getMonth() && currentYear === now.getFullYear();
-
-  const monthName = new Date(currentYear, currentMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-
-  const prevMonth = () => {
-    if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(y => y - 1); }
-    else setCurrentMonth(m => m - 1);
-  };
-
-  const nextMonth = () => {
-    if (currentMonth === 11) { setCurrentMonth(0); setCurrentYear(y => y + 1); }
-    else setCurrentMonth(m => m + 1);
-  };
-
-  const dayEvents = selectedDate === today ? EVENTS : [];
+  const [activeView, setActiveView] = useState('Month');
 
   return (
-    <div className="flex h-full">
-      {/* Mini Calendar Sidebar */}
-      <div className="w-[220px] shrink-0 p-3" style={{ background: 'rgba(255,255,255,0.04)', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
-        {/* Month Nav */}
-        <div className="flex items-center justify-between mb-3">
-          <button onClick={prevMonth} className="p-1 rounded hover:bg-white/10 text-white/60 text-[14px]">‹</button>
-          <span className="text-[14px] font-medium text-white/90">{monthName}</span>
-          <button onClick={nextMonth} className="p-1 rounded hover:bg-white/10 text-white/60 text-[14px]">›</button>
+    <div className="flex flex-col h-full">
+      {/* Toolbar */}
+      <div
+        className="flex items-center gap-2 px-3 py-2 shrink-0"
+        style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+      >
+        {/* Navigation */}
+        <div className="flex items-center gap-1">
+          <button className="p-1.5 rounded hover:bg-white/10 text-white/50 hover:text-white/70 transition-colors">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+              <polyline points="8,2 4,6 8,10" />
+            </svg>
+          </button>
+          <button className="px-2.5 py-1 rounded-md text-[12px] text-white/70 hover:bg-white/10 transition-colors font-medium">
+            Today
+          </button>
+          <button className="p-1.5 rounded hover:bg-white/10 text-white/50 hover:text-white/70 transition-colors">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+              <polyline points="4,2 8,6 4,10" />
+            </svg>
+          </button>
         </div>
 
-        {/* Day Headers */}
-        <div className="grid grid-cols-7 gap-0 mb-1">
-          {DAYS.map(d => (
-            <div key={d} className="text-[10px] text-white/35 text-center font-medium py-1">{d}</div>
+        {/* Month Title */}
+        <div className="text-[15px] font-semibold text-white/90 ml-2">July 2026</div>
+
+        {/* View Buttons */}
+        <div className="flex items-center gap-0.5 ml-4">
+          {VIEW_BUTTONS.map(view => (
+            <button
+              key={view}
+              className={`px-2.5 py-1 rounded text-[11px] font-medium transition-colors ${
+                activeView === view
+                  ? 'bg-white/15 text-white/90'
+                  : 'text-white/40 hover:text-white/60 hover:bg-white/6'
+              }`}
+              onClick={() => setActiveView(view)}
+            >
+              {view}
+            </button>
           ))}
         </div>
 
-        {/* Days Grid */}
-        <div className="grid grid-cols-7 gap-0">
-          {Array.from({ length: firstDay }, (_, i) => (
-            <div key={`empty-${i}`} className="aspect-square" />
-          ))}
-          {Array.from({ length: daysInMonth }, (_, i) => {
-            const day = i + 1;
-            const isToday = isCurrentMonth && day === today;
-            const isSelected = day === selectedDate;
-            const hasEvents = isToday;
-            return (
-              <button
-                key={day}
-                className={`aspect-square rounded-full flex items-center justify-center text-[12px] relative ${
-                  isSelected
-                    ? 'bg-blue-500 text-white'
-                    : isToday
-                      ? 'text-white font-semibold'
-                      : 'text-white/70 hover:bg-white/8'
-                }`}
-                onClick={() => setSelectedDate(day)}
-              >
-                {day}
-                {hasEvents && !isSelected && (
-                  <div className="absolute bottom-0.5 w-1 h-1 rounded-full bg-blue-400" />
-                )}
-              </button>
-            );
-          })}
+        {/* Spacer */}
+        <div className="flex-1" />
+
+        {/* Search */}
+        <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white/5">
+          <svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5">
+            <circle cx="6" cy="6" r="4.5" />
+            <line x1="9.5" y1="9.5" x2="13" y2="13" strokeLinecap="round" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search"
+            className="w-[100px] bg-transparent text-[11px] text-white/80 outline-none placeholder:text-white/25"
+          />
         </div>
+
+        {/* New Event */}
+        <button className="flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] text-white/70 hover:bg-white/10 transition-colors font-medium">
+          New Event
+          <span className="text-white/30 text-[10px]">⌘N</span>
+        </button>
       </div>
 
-      {/* Events */}
-      <div className="flex-1 overflow-y-auto p-4">
-        <div className="text-[18px] font-semibold text-white/90 mb-1">
-          {isCurrentMonth && selectedDate === today ? 'Today' : `June ${selectedDate}`}
-        </div>
-        <div className="text-[13px] text-white/40 mb-4">
-          {new Date(currentYear, currentMonth, selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+      {/* Calendar Grid */}
+      <div className="flex-1 overflow-hidden flex flex-col px-3 py-2">
+        {/* Day Headers */}
+        <div className="grid grid-cols-7 mb-1">
+          {DAY_HEADERS.map((day, i) => (
+            <div key={i} className="text-center text-[11px] font-medium text-white/40 py-1">
+              {day}
+            </div>
+          ))}
         </div>
 
-        {dayEvents.length > 0 ? (
-          <div className="space-y-2">
-            {dayEvents.map(event => (
+        {/* Calendar Days */}
+        <div className="flex-1 grid grid-rows-6 grid-cols-7 gap-0">
+          {/* Previous month overflow (June) */}
+          {PREV_MONTH_DAYS.map((day, i) => (
+            <div
+              key={`prev-${i}`}
+              className="flex flex-col items-center pt-1 border-t border-white/4"
+            >
+              <span className="text-[12px] text-white/20 leading-none">{day}</span>
+            </div>
+          ))}
+
+          {/* Empty cells before start */}
+          {Array.from({ length: START_DAY - PREV_MONTH_DAYS.length }, (_, i) => (
+            <div
+              key={`empty-${i}`}
+              className="flex flex-col items-center pt-1 border-t border-white/4"
+            />
+          ))}
+
+          {/* July days */}
+          {Array.from({ length: DAYS_IN_MONTH }, (_, i) => {
+            const day = i + 1;
+            const isToday = day === TODAY;
+            const events = EVENT_DOTS[day] || [];
+
+            return (
               <div
-                key={event.id}
-                className="flex items-center gap-3 p-3 rounded-xl"
-                style={{ background: 'rgba(255,255,255,0.04)', borderLeft: `3px solid ${event.color}` }}
+                key={`day-${day}`}
+                className="flex flex-col items-center pt-1 border-t border-white/4 group hover:bg-white/4 transition-colors"
               >
-                <div className="text-[12px] text-white/50 w-[60px] shrink-0">{event.time}</div>
-                <div className="text-[13px] text-white/80 font-medium">{event.title}</div>
-                <div className="text-[11px] text-white/35 ml-auto">{event.duration}</div>
+                <span
+                  className={`text-[12px] leading-none w-6 h-6 flex items-center justify-center rounded-full ${
+                    isToday
+                      ? 'bg-blue-500 text-white font-semibold'
+                      : 'text-white/70'
+                  }`}
+                >
+                  {day}
+                </span>
+                {events.length > 0 && (
+                  <div className="flex gap-0.5 mt-0.5">
+                    {events.slice(0, 3).map((color, ci) => (
+                      <div
+                        key={ci}
+                        className="w-1 h-1 rounded-full"
+                        style={{ background: color }}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-[14px] text-white/30 text-center mt-12">No events scheduled</div>
-        )}
+            );
+          })}
+
+          {/* Next month overflow (August) */}
+          {NEXT_MONTH_DAYS.map((day, i) => (
+            <div
+              key={`next-${i}`}
+              className="flex flex-col items-center pt-1 border-t border-white/4"
+            >
+              <span className="text-[12px] text-white/20 leading-none">{day}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

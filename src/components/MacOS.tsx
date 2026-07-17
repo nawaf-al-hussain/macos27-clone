@@ -98,6 +98,7 @@ export default function MacOS() {
   const [showControlCenter, setShowControlCenter] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showSpotlight, setShowSpotlight] = useState(false);
+  const [showLaunchpad, setShowLaunchpad] = useState(false);
 
   const {
     windows,
@@ -145,11 +146,12 @@ export default function MacOS() {
         if (showSpotlight) setShowSpotlight(false);
         if (showControlCenter) setShowControlCenter(false);
         if (showNotifications) setShowNotifications(false);
+        if (showLaunchpad) setShowLaunchpad(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [phase, showSpotlight, showControlCenter, showNotifications]);
+  }, [phase, showSpotlight, showControlCenter, showNotifications, showLaunchpad]);
 
   return (
     <div className="relative w-full h-full overflow-hidden" style={{ background: '#000' }}>
@@ -196,6 +198,33 @@ export default function MacOS() {
           {/* Desktop Widgets */}
           <DesktopWidgets />
 
+          {/* Desktop Icons (top-right area) */}
+          <div className="absolute top-[40px] right-4 flex flex-col items-end gap-2" style={{ zIndex: 'var(--z-desktop)' }}>
+            <button className="flex flex-col items-center gap-0.5 w-[72px] group" onDoubleClick={() => openWindow('finder', 'Tahoe Trip')}>
+              <div className="w-[52px] h-[44px] flex items-end justify-center pb-0.5">
+                <svg width="48" height="40" viewBox="0 0 48 40" fill="none">
+                  <path d="M4 4h28v28H4z" rx="2" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+                  <path d="M8 4V2a2 2 0 012-2h20v4" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.3)" strokeWidth="0.8"/>
+                  <path d="M4 12h28" stroke="rgba(255,255,255,0.2)" strokeWidth="0.8"/>
+                </svg>
+              </div>
+              <span className="text-[11px] text-white/90 text-center leading-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Tahoe Trip</span>
+            </button>
+            <button className="flex flex-col items-center gap-0.5 w-[72px] group">
+              <div className="w-[52px] h-[44px] flex items-end justify-center pb-0.5">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                  <rect x="2" y="2" width="36" height="36" rx="4" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+                  <rect x="6" y="6" width="28" height="4" rx="1" fill="rgba(255,255,255,0.3)"/>
+                  <rect x="6" y="13" width="20" height="2" rx="0.5" fill="rgba(255,255,255,0.15)"/>
+                  <rect x="6" y="18" width="22" height="2" rx="0.5" fill="rgba(255,255,255,0.15)"/>
+                  <rect x="6" y="23" width="16" height="2" rx="0.5" fill="rgba(255,255,255,0.15)"/>
+                  <rect x="28" y="28" width="6" height="6" rx="1" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.3)" strokeWidth="0.5"/>
+                </svg>
+              </div>
+              <span className="text-[11px] text-white/90 text-center leading-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Welcome.txt</span>
+            </button>
+          </div>
+
           {/* Menu Bar */}
           <MenuBar
             activeApp={APP_NAMES[activeApp] || 'Finder'}
@@ -234,7 +263,59 @@ export default function MacOS() {
           <Dock
             onOpenApp={handleOpenApp}
             isAppOpen={isAppOpen}
+            onLaunchpad={() => { setShowLaunchpad(prev => !prev); setShowSpotlight(false); setShowControlCenter(false); setShowNotifications(false); }}
           />
+
+          {/* Launchpad Overlay */}
+          {showLaunchpad && (
+            <div
+              className="fixed inset-0 flex items-center justify-center"
+              style={{ zIndex: 'var(--z-appswitcher)', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)' }}
+              onClick={() => setShowLaunchpad(false)}
+            >
+              <div className="grid grid-cols-7 gap-x-8 gap-y-6 p-8 max-w-[680px] w-full" onClick={(e) => e.stopPropagation()}>
+                {[
+                  { id: 'settings', name: 'System Settings' },
+                  { id: 'appstore', name: 'App Store' },
+                  { id: 'games', name: 'Games' },
+                  { id: 'finder', name: 'Finder' },
+                  { id: 'calendar', name: 'Calendar' },
+                  { id: 'notes', name: 'Notes' },
+                  { id: 'reminders', name: 'Reminders' },
+                  { id: 'safari', name: 'Safari' },
+                  { id: 'contacts', name: 'Contacts' },
+                  { id: 'messages', name: 'Messages' },
+                  { id: 'facetime', name: 'FaceTime' },
+                  { id: 'phone', name: 'Phone' },
+                  { id: 'freeform', name: 'Freeform' },
+                  { id: 'photos', name: 'Photos' },
+                  { id: 'maps', name: 'Maps' },
+                  { id: 'news', name: 'News' },
+                  { id: 'music', name: 'Music' },
+                  { id: 'podcasts', name: 'Podcasts' },
+                  { id: 'tv', name: 'TV' },
+                ].map((app) => (
+                  <div
+                    key={app.id}
+                    className="flex flex-col items-center gap-1.5 cursor-pointer group"
+                    onClick={() => { handleOpenApp(app.id); setShowLaunchpad(false); }}
+                  >
+                    <div
+                      className="w-[64px] h-[64px] rounded-[14px] flex items-center justify-center shadow-lg transition-transform group-hover:scale-105"
+                      style={{
+                        background: 'rgba(255,255,255,0.12)',
+                        backdropFilter: 'blur(20px)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                      }}
+                    >
+                      <span className="text-[22px] leading-none">{app.name === 'Finder' ? '🖥' : app.name === 'Safari' ? '🧭' : app.name === 'Messages' ? '💬' : app.name === 'Mail' ? '✉️' : app.name === 'Maps' ? '🗺' : app.name === 'Photos' ? '🌸' : app.name === 'FaceTime' ? '📹' : app.name === 'Phone' ? '📞' : app.name === 'Calendar' ? '📅' : app.name === 'Contacts' ? '👤' : app.name === 'Reminders' ? '📋' : app.name === 'Notes' ? '📝' : app.name === 'Freeform' ? '🎨' : app.name === 'Music' ? '♫' : app.name === 'Podcasts' ? '🎙' : app.name === 'TV' ? '📺' : app.name === 'News' ? '📰' : app.name === 'Games' ? '🎮' : app.name === 'App Store' ? '🅰' : '⚙'}</span>
+                    </div>
+                    <span className="text-[10px] text-white/80 group-hover:text-white transition-colors text-center leading-tight">{app.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Control Center */}
           {showControlCenter && (
