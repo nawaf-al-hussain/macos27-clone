@@ -89,7 +89,7 @@ export default function Dock({ onOpenApp, isAppOpen }: DockProps) {
   }, [showTooltip]);
 
   return (
-    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[400]">
+    <div className="absolute bottom-2 left-1/2 -translate-x-1/2" style={{ zIndex: 'var(--z-dock)' }}>
       <div
         ref={dockRef}
         className="flex items-end gap-[2px] px-2 pb-1 pt-1 rounded-[18px]"

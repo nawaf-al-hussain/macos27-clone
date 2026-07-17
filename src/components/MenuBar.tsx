@@ -54,8 +54,9 @@ export default function MenuBar({ activeApp, onSpotlight, onControlCenter, onNot
 
   return (
     <div
-      className="absolute top-0 left-0 right-0 z-[500] h-[28px] flex items-center px-2 text-[13px] font-normal"
+      className="absolute top-0 left-0 right-0 h-[28px] flex items-center px-2 text-[13px] font-normal"
       style={{
+        zIndex: 'var(--z-menubar)',
         background: 'rgba(30, 30, 30, 0.65)',
         backdropFilter: 'blur(40px)',
         WebkitBackdropFilter: 'blur(40px)',
