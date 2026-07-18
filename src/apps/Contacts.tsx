@@ -89,10 +89,10 @@ export default function Contacts() {
         <div className="px-3 py-2.5" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
           <div className="flex items-center gap-2 px-1 py-1 rounded-md hover:bg-white/6 cursor-pointer transition-colors">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-orange-400 flex items-center justify-center text-[14px] font-bold text-white shrink-0">
-              K
+              N
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-[13px] text-white/90 font-medium">kimi</div>
+              <div className="text-[13px] text-white/90 font-medium">Nawaf</div>
               <div className="text-[10px] text-white/35">My Card</div>
             </div>
           </div>

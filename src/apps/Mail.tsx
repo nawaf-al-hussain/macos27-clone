@@ -89,7 +89,7 @@ const MAILBOXES = [
 ];
 
 const ACCOUNTS = [
-  { id: 'icloud', name: 'iCloud', email: 'kimi@icloud.com', icon: 'icloud' },
+  { id: 'icloud', name: 'iCloud', email: 'nawaf@icloud.com', icon: 'icloud' },
   { id: 'gmail', name: 'Gmail', email: 'offline', icon: 'gmail', offline: true },
 ];
 

@@ -68,10 +68,10 @@ export default function SystemSettings() {
               className="w-10 h-10 rounded-full shrink-0 flex items-center justify-center text-[16px] font-semibold text-white"
               style={{ background: 'linear-gradient(135deg, #007aff 0%, #5ac8fa 100%)' }}
             >
-              K
+              N
             </div>
             <div className="text-left min-w-0">
-              <div className="text-[13px] font-medium text-white/85">kimi</div>
+              <div className="text-[13px] font-medium text-white/85">Nawaf</div>
               <div className="text-[11px] text-white/40">Apple Account</div>
             </div>
           </button>

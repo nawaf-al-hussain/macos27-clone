@@ -96,13 +96,13 @@ export default function LockScreen({ onUnlock, unlocking }: LockScreenProps) {
             boxShadow: 'rgba(255, 255, 255, 0.4) 0px 0px 0px 1px inset, rgba(0, 0, 0, 0.3) 0px 8px 24px',
           }}
         >
-          <span className="text-white text-[40px] font-semibold">K</span>
+          <span className="text-white text-[40px] font-semibold">N</span>
         </div>
         <div
           className="mt-3 text-white text-[15px] font-semibold"
           style={{ textShadow: 'rgba(0, 0, 0, 0.4) 0px 1px 4px' }}
         >
-          kimi
+          Nawaf
         </div>
         {/* Pulsing login prompt */}
         <div

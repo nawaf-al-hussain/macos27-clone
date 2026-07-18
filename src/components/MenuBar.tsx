@@ -42,7 +42,7 @@ function makeAppleMenuItems(): MenuItemDef[] {
     { label: 'Shut Down…' },
     { label: '', separator: true },
     { label: 'Lock Screen', shortcut: '⌃⌘Q' },
-    { label: 'Log Out kimi…', shortcut: '⇧⌘Q' },
+    { label: 'Log Out Nawaf…', shortcut: '⇧⌘Q' },
   ];
 }
 
