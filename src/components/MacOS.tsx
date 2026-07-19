@@ -10,6 +10,7 @@ import Window from '@/components/Window';
 import ControlCenter from '@/components/ControlCenter';
 import Notifications from '@/components/Notifications';
 import Spotlight from '@/components/Spotlight';
+import Launchpad from '@/components/Launchpad';
 import { useWindowManager, type WindowState } from '@/hooks/useWindowManager';
 
 import Finder from '@/apps/Finder';
@@ -99,6 +100,8 @@ export default function MacOS() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showSpotlight, setShowSpotlight] = useState(false);
   const [showLaunchpad, setShowLaunchpad] = useState(false);
+  const [brightness, setBrightness] = useState(100);
+  const [nightShift, setNightShift] = useState(false);
 
   const {
     windows,
@@ -268,58 +271,41 @@ export default function MacOS() {
 
           {/* Launchpad Overlay */}
           {showLaunchpad && (
+            <Launchpad
+              onOpenApp={handleOpenApp}
+              onClose={() => setShowLaunchpad(false)}
+            />
+          )}
+
+          {/* Brightness overlay */}
+          {brightness < 100 && (
             <div
-              className="fixed inset-0 flex items-center justify-center"
-              style={{ zIndex: 'var(--z-appswitcher)', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)' }}
-              onClick={() => setShowLaunchpad(false)}
-            >
-              <div className="grid grid-cols-7 gap-x-8 gap-y-6 p-8 max-w-[680px] w-full" onClick={(e) => e.stopPropagation()}>
-                {[
-                  { id: 'settings', name: 'System Settings' },
-                  { id: 'appstore', name: 'App Store' },
-                  { id: 'games', name: 'Games' },
-                  { id: 'finder', name: 'Finder' },
-                  { id: 'calendar', name: 'Calendar' },
-                  { id: 'notes', name: 'Notes' },
-                  { id: 'reminders', name: 'Reminders' },
-                  { id: 'safari', name: 'Safari' },
-                  { id: 'contacts', name: 'Contacts' },
-                  { id: 'messages', name: 'Messages' },
-                  { id: 'facetime', name: 'FaceTime' },
-                  { id: 'phone', name: 'Phone' },
-                  { id: 'freeform', name: 'Freeform' },
-                  { id: 'photos', name: 'Photos' },
-                  { id: 'maps', name: 'Maps' },
-                  { id: 'news', name: 'News' },
-                  { id: 'music', name: 'Music' },
-                  { id: 'podcasts', name: 'Podcasts' },
-                  { id: 'tv', name: 'TV' },
-                ].map((app) => (
-                  <div
-                    key={app.id}
-                    className="flex flex-col items-center gap-1.5 cursor-pointer group"
-                    onClick={() => { handleOpenApp(app.id); setShowLaunchpad(false); }}
-                  >
-                    <div
-                      className="w-[64px] h-[64px] rounded-[14px] flex items-center justify-center shadow-lg transition-transform group-hover:scale-105"
-                      style={{
-                        background: 'rgba(255,255,255,0.12)',
-                        backdropFilter: 'blur(20px)',
-                        border: '1px solid rgba(255,255,255,0.2)',
-                      }}
-                    >
-                      <span className="text-[22px] leading-none">{app.name === 'Finder' ? '🖥' : app.name === 'Safari' ? '🧭' : app.name === 'Messages' ? '💬' : app.name === 'Mail' ? '✉️' : app.name === 'Maps' ? '🗺' : app.name === 'Photos' ? '🌸' : app.name === 'FaceTime' ? '📹' : app.name === 'Phone' ? '📞' : app.name === 'Calendar' ? '📅' : app.name === 'Contacts' ? '👤' : app.name === 'Reminders' ? '📋' : app.name === 'Notes' ? '📝' : app.name === 'Freeform' ? '🎨' : app.name === 'Music' ? '♫' : app.name === 'Podcasts' ? '🎙' : app.name === 'TV' ? '📺' : app.name === 'News' ? '📰' : app.name === 'Games' ? '🎮' : app.name === 'App Store' ? '🅰' : '⚙'}</span>
-                    </div>
-                    <span className="text-[10px] text-white/80 group-hover:text-white transition-colors text-center leading-tight">{app.name}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+              className="fixed inset-0 pointer-events-none"
+              style={{
+                zIndex: 9999,
+                background: `rgba(0,0,0,${(100 - brightness) / 100})`,
+              }}
+            />
+          )}
+
+          {/* Night Shift overlay */}
+          {nightShift && (
+            <div
+              className="fixed inset-0 pointer-events-none mix-blend-multiply"
+              style={{
+                zIndex: 9998,
+                background: 'rgba(255, 147, 41, 0.15)',
+              }}
+            />
           )}
 
           {/* Control Center */}
           {showControlCenter && (
-            <ControlCenter onClose={() => setShowControlCenter(false)} />
+            <ControlCenter
+              onClose={() => setShowControlCenter(false)}
+              onBrightnessChange={setBrightness}
+              onNightShiftChange={setNightShift}
+            />
           )}
 
           {/* Notifications */}

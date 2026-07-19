@@ -1,20 +1,23 @@
 'use client';
 
 import { useState } from 'react';
+import { sounds, haptic, setVolume as setSoundVolume, setMuted as setSoundMuted } from '@/lib/sounds';
 
 interface ControlCenterProps {
   onClose: () => void;
+  onBrightnessChange?: (v: number) => void;
+  onNightShiftChange?: (v: boolean) => void;
 }
 
-export default function ControlCenter({ onClose }: ControlCenterProps) {
+export default function ControlCenter({ onClose, onBrightnessChange, onNightShiftChange }: ControlCenterProps) {
   const [wifi, setWifi] = useState(true);
   const [bluetooth, setBluetooth] = useState(true);
   const [airdrop, setAirdrop] = useState(false);
   const [focus, setFocus] = useState(false);
   const [stageManager, setStageManager] = useState(false);
-  const [brightness, setBrightness] = useState(80);
-  const [volume, setVolume] = useState(65);
-  const [muted, setMuted] = useState(false);
+  const [brightness, setBrightnessState] = useState(80);
+  const [volume, setVolumeState] = useState(65);
+  const [muted, setMutedState] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
   const [nightShift, setNightShift] = useState(false);
 
@@ -38,28 +41,28 @@ export default function ControlCenter({ onClose }: ControlCenterProps) {
             label="Wi-Fi"
             sublabel={wifi ? 'HomeNet-5G' : 'Off'}
             active={wifi}
-            onClick={() => setWifi(!wifi)}
+            onClick={() => { sounds.tick(); haptic(); setWifi(!wifi); }}
           />
           <ToggleTile
             icon={<BluetoothIcon active={bluetooth} />}
             label="Bluetooth"
             sublabel={bluetooth ? 'On' : 'Off'}
             active={bluetooth}
-            onClick={() => setBluetooth(!bluetooth)}
+            onClick={() => { sounds.tick(); haptic(); setBluetooth(!bluetooth); }}
           />
           <ToggleTile
             icon={<AirDropIcon active={airdrop} />}
             label="AirDrop"
             sublabel={airdrop ? 'Everyone' : 'Receiving Off'}
             active={airdrop}
-            onClick={() => setAirdrop(!airdrop)}
+            onClick={() => { sounds.tick(); haptic(); setAirdrop(!airdrop); }}
           />
           <ToggleTile
             icon={<FocusIcon active={focus} />}
             label="Focus"
             sublabel={focus ? 'On' : 'Off'}
             active={focus}
-            onClick={() => setFocus(!focus)}
+            onClick={() => { sounds.tick(); haptic(); setFocus(!focus); }}
           />
         </div>
 
@@ -70,14 +73,14 @@ export default function ControlCenter({ onClose }: ControlCenterProps) {
             label="Stage Manager"
             sublabel={stageManager ? 'On' : 'Off'}
             active={stageManager}
-            onClick={() => setStageManager(!stageManager)}
+            onClick={() => { sounds.tick(); haptic(); setStageManager(!stageManager); }}
           />
           <ToggleTile
             icon={<ScreenMirroringIcon />}
             label="Screen Mirroring"
             sublabel="AirPlay"
             active={false}
-            onClick={() => {}}
+            onClick={() => { sounds.tick(); haptic(); }}
           />
         </div>
 
@@ -87,7 +90,7 @@ export default function ControlCenter({ onClose }: ControlCenterProps) {
           style={{ background: 'rgba(255,255,255,0.06)' }}
         >
           <button
-            onClick={() => setMuted(!muted)}
+            onClick={() => { const m = !muted; setMutedState(m); setSoundMuted(m); sounds.tick(); haptic(); }}
             className="flex items-center justify-center w-5 h-5 shrink-0"
           >
             <VolumeIcon muted={muted} />
@@ -98,7 +101,7 @@ export default function ControlCenter({ onClose }: ControlCenterProps) {
               min={0}
               max={100}
               value={muted ? 0 : volume}
-              onChange={e => { setVolume(Number(e.target.value)); if (muted) setMuted(false); }}
+              onChange={e => { const v = Number(e.target.value); setSoundVolume(v / 100); setVolumeState(v); if (muted) { setMutedState(false); setSoundMuted(false); } }}
               className="w-full h-[4px] rounded-full appearance-none cursor-pointer cc-slider"
               style={{
                 background: `linear-gradient(to right, ${muted ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.8)'} ${muted ? 0 : volume}%, rgba(255,255,255,0.15) ${muted ? 0 : volume}%)`,
@@ -121,7 +124,7 @@ export default function ControlCenter({ onClose }: ControlCenterProps) {
               min={0}
               max={100}
               value={brightness}
-              onChange={e => setBrightness(Number(e.target.value))}
+              onChange={e => { const v = Number(e.target.value); setBrightnessState(v); onBrightnessChange?.(v); }}
               className="w-full h-[4px] rounded-full appearance-none cursor-pointer cc-slider"
               style={{
                 background: `linear-gradient(to right, rgba(255,255,255,0.8) ${brightness}%, rgba(255,255,255,0.15) ${brightness}%)`,
@@ -136,19 +139,19 @@ export default function ControlCenter({ onClose }: ControlCenterProps) {
             icon={<DarkModeIcon active={darkMode} />}
             label="Dark Mode"
             active={darkMode}
-            onClick={() => setDarkMode(!darkMode)}
+            onClick={() => { sounds.tick(); haptic(); setDarkMode(!darkMode); }}
           />
           <ActionButton
             icon={<NightShiftIcon active={nightShift} />}
             label="Night Shift"
             active={nightShift}
-            onClick={() => setNightShift(!nightShift)}
+            onClick={() => { const ns = !nightShift; setNightShift(ns); onNightShiftChange?.(ns); sounds.tick(); haptic(); }}
           />
           <ActionButton
             icon={<MuteIcon active={muted} />}
             label="Mute"
             active={muted}
-            onClick={() => setMuted(!muted)}
+            onClick={() => { const m = !muted; setMutedState(m); setSoundMuted(m); sounds.tick(); haptic(); }}
           />
           <button
             className="flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-xl hover:bg-white/10 transition-colors cursor-default"

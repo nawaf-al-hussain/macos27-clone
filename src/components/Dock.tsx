@@ -3,12 +3,14 @@
 import { useState, useRef, useCallback, type ReactNode } from 'react';
 import {
   Smile, LayoutGrid, Compass, MessagesSquare, Mail as MailIcon, Map,
-  Image, Video, Phone, Calendar, ContactRound, ListChecks, NotebookPen,
+  Flower2, Video, Phone, ContactRound, ListChecks, NotebookPen,
   Spline, Music, Podcast as PodcastIcon, Tv, Newspaper, Gamepad2,
-  Store, Settings, Download, Trash2, FolderDown,
+  Store, Settings, FolderDown,
 } from 'lucide-react';
 
 /* ─────────────── Gradient Icon ─────────────── */
+
+const ICON_SHADOW = '0 1px 3px rgba(0,0,0,0.18), inset 0 0 0 0.5px rgba(255,255,255,0.25)';
 
 function GradientIcon({
   from,
@@ -23,35 +25,23 @@ function GradientIcon({
   glyphColor?: string;
   size?: number;
 }) {
-  const iconSize = Math.round(size * 0.46);
+  const iconSize = Math.round(size * 0.58);
   return (
     <div
       style={{
         width: size,
         height: size,
-        borderRadius: size * 0.22,
+        borderRadius: size * 0.2237,
         background: `linear-gradient(135deg, ${from}, ${to})`,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.15)',
+        boxShadow: ICON_SHADOW,
         position: 'relative',
         overflow: 'hidden',
+        flexShrink: 0,
       }}
     >
-      {/* Subtle inner highlight */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '50%',
-          borderRadius: `${size * 0.22}px ${size * 0.22}px 50% 50%`,
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%)',
-          pointerEvents: 'none',
-        }}
-      />
       <Glyph size={iconSize} color={glyphColor || 'white'} strokeWidth={1.8} />
     </div>
   );
@@ -70,15 +60,16 @@ function CalendarDockIcon({ size = 48 }: { size?: number }) {
       style={{
         width: size,
         height: size,
-        borderRadius: size * 0.22,
+        borderRadius: size * 0.2237,
         background: 'linear-gradient(135deg, #FFFFFF, #E5E5EA)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.5)',
+        boxShadow: ICON_SHADOW,
         position: 'relative',
         overflow: 'hidden',
+        flexShrink: 0,
       }}
     >
       {/* Red header */}
@@ -90,7 +81,7 @@ function CalendarDockIcon({ size = 48 }: { size?: number }) {
           right: 0,
           height: '35%',
           background: '#FF3B30',
-          borderRadius: `${size * 0.22}px ${size * 0.22}px 0 0`,
+          borderRadius: `${size * 0.2237}px ${size * 0.2237}px 0 0`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -117,28 +108,17 @@ function DownloadsFolderIcon({ size = 48 }: { size?: number }) {
       style={{
         width: size,
         height: size,
-        borderRadius: size * 0.22,
+        borderRadius: size * 0.2237,
         background: 'linear-gradient(135deg, #8E8E93, #636366)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.15)',
+        boxShadow: ICON_SHADOW,
         position: 'relative',
         overflow: 'hidden',
+        flexShrink: 0,
       }}
     >
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '50%',
-          borderRadius: `${size * 0.22}px ${size * 0.22}px 50% 50%`,
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%)',
-          pointerEvents: 'none',
-        }}
-      />
       <FolderDown size={iconSize} color="white" strokeWidth={1.8} />
     </div>
   );
@@ -153,65 +133,23 @@ function TrashDockIcon({ size = 48 }: { size?: number }) {
       style={{
         width: size,
         height: size,
-        borderRadius: size * 0.22,
+        borderRadius: size * 0.2237,
         background: 'linear-gradient(135deg, #8E8E93, #636366)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.15)',
+        boxShadow: ICON_SHADOW,
         position: 'relative',
         overflow: 'hidden',
+        flexShrink: 0,
       }}
     >
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '50%',
-          borderRadius: `${size * 0.22}px ${size * 0.22}px 50% 50%`,
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%)',
-          pointerEvents: 'none',
-        }}
-      />
-      <Trash2 size={iconSize} color="white" strokeWidth={1.8} />
-    </div>
-  );
-}
-
-/* ─────────────── Photos Icon (special multicolor) ─────────────── */
-
-function PhotosDockIcon({ size = 48 }: { size?: number }) {
-  const iconSize = Math.round(size * 0.42);
-  return (
-    <div
-      style={{
-        width: size,
-        height: size,
-        borderRadius: size * 0.22,
-        background: 'linear-gradient(135deg, #FF6B6B 0%, #FFB347 33%, #FFE66D 50%, #4ECB71 75%, #5AC8FA 100%)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2)',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '50%',
-          borderRadius: `${size * 0.22}px ${size * 0.22}px 50% 50%`,
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 100%)',
-          pointerEvents: 'none',
-        }}
-      />
-      <Image size={iconSize} color="white" strokeWidth={1.8} />
+      <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="3 6 5 6 21 6" />
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+        <line x1="10" y1="11" x2="10" y2="17" />
+        <line x1="14" y1="11" x2="14" y2="17" />
+      </svg>
     </div>
   );
 }
@@ -219,27 +157,27 @@ function PhotosDockIcon({ size = 48 }: { size?: number }) {
 /* ─────────────── Icon Map ─────────────── */
 
 const ICON_MAP: Record<string, (props: { size: number }) => ReactNode> = {
-  finder: ({ size }) => <GradientIcon from="#5EC9F8" to="#1463E8" glyph={Smile} size={size} />,
-  apps: ({ size }) => <GradientIcon from="#8E8E93" to="#48484A" glyph={LayoutGrid} size={size} />,
-  safari: ({ size }) => <GradientIcon from="#5EE0F8" to="#1A6CF0" glyph={Compass} size={size} />,
-  messages: ({ size }) => <GradientIcon from="#7BF87B" to="#0FD130" glyph={MessagesSquare} size={size} />,
-  mail: ({ size }) => <GradientIcon from="#5EC9F8" to="#1463E8" glyph={MailIcon} size={size} />,
-  maps: ({ size }) => <GradientIcon from="#8FE388" to="#2FA84F" glyph={Map} size={size} />,
-  photos: ({ size }) => <PhotosDockIcon size={size} />,
-  facetime: ({ size }) => <GradientIcon from="#7BF87B" to="#0FD130" glyph={Video} size={size} />,
-  phone: ({ size }) => <GradientIcon from="#7BF87B" to="#0FD130" glyph={Phone} size={size} />,
+  finder: ({ size }) => <GradientIcon from="rgb(94,201,248)" to="rgb(20,99,232)" glyph={Smile} size={size} />,
+  apps: ({ size }) => <GradientIcon from="rgb(142,142,147)" to="rgb(72,72,74)" glyph={LayoutGrid} size={size} />,
+  safari: ({ size }) => <GradientIcon from="rgb(94,224,248)" to="rgb(26,108,240)" glyph={Compass} size={size} />,
+  messages: ({ size }) => <GradientIcon from="rgb(123,248,123)" to="rgb(15,209,48)" glyph={MessagesSquare} size={size} />,
+  mail: ({ size }) => <GradientIcon from="rgb(94,201,248)" to="rgb(20,99,232)" glyph={MailIcon} size={size} />,
+  maps: ({ size }) => <GradientIcon from="rgb(143,227,136)" to="rgb(47,168,79)" glyph={Map} size={size} />,
+  photos: ({ size }) => <GradientIcon from="rgb(255,255,255)" to="rgb(229,229,234)" glyph={Flower2} glyphColor="#333" size={size} />,
+  facetime: ({ size }) => <GradientIcon from="rgb(123,248,123)" to="rgb(15,209,48)" glyph={Video} size={size} />,
+  phone: ({ size }) => <GradientIcon from="rgb(123,248,123)" to="rgb(15,209,48)" glyph={Phone} size={size} />,
   calendar: ({ size }) => <CalendarDockIcon size={size} />,
-  contacts: ({ size }) => <GradientIcon from="#A5988C" to="#6E6259" glyph={ContactRound} size={size} />,
-  reminders: ({ size }) => <GradientIcon from="#FF9F6B" to="#F74F9E" glyph={ListChecks} size={size} />,
-  notes: ({ size }) => <GradientIcon from="#FFE57A" to="#FFC600" glyph={NotebookPen} size={size} />,
-  freeform: ({ size }) => <GradientIcon from="#FFFFFF" to="#E8E8ED" glyph={Spline} glyphColor="#5E5CE6" size={size} />,
-  music: ({ size }) => <GradientIcon from="#FC5C7D" to="#FA2D55" glyph={Music} size={size} />,
-  podcasts: ({ size }) => <GradientIcon from="#B150E2" to="#7D2AE8" glyph={PodcastIcon} size={size} />,
-  tv: ({ size }) => <GradientIcon from="#3A3A3C" to="#000000" glyph={Tv} size={size} />,
-  news: ({ size }) => <GradientIcon from="#FF6B6B" to="#FA2D55" glyph={Newspaper} size={size} />,
-  games: ({ size }) => <GradientIcon from="#FF9F0A" to="#F74F9E" glyph={Gamepad2} size={size} />,
-  appstore: ({ size }) => <GradientIcon from="#32ADE6" to="#0A5CFF" glyph={Store} size={size} />,
-  settings: ({ size }) => <GradientIcon from="#8E8E93" to="#48484A" glyph={Settings} size={size} />,
+  contacts: ({ size }) => <GradientIcon from="rgb(165,152,140)" to="rgb(110,98,89)" glyph={ContactRound} size={size} />,
+  reminders: ({ size }) => <GradientIcon from="rgb(255,159,107)" to="rgb(247,79,158)" glyph={ListChecks} size={size} />,
+  notes: ({ size }) => <GradientIcon from="rgb(255,229,122)" to="rgb(255,198,0)" glyph={NotebookPen} size={size} />,
+  freeform: ({ size }) => <GradientIcon from="rgb(255,255,255)" to="rgb(232,232,237)" glyph={Spline} glyphColor="#5E5CE6" size={size} />,
+  music: ({ size }) => <GradientIcon from="rgb(252,92,125)" to="rgb(250,45,85)" glyph={Music} size={size} />,
+  podcasts: ({ size }) => <GradientIcon from="rgb(177,80,226)" to="rgb(125,42,232)" glyph={PodcastIcon} size={size} />,
+  tv: ({ size }) => <GradientIcon from="rgb(58,58,60)" to="rgb(0,0,0)" glyph={Tv} size={size} />,
+  news: ({ size }) => <GradientIcon from="rgb(255,107,107)" to="rgb(250,45,85)" glyph={Newspaper} size={size} />,
+  games: ({ size }) => <GradientIcon from="rgb(255,159,10)" to="rgb(247,79,158)" glyph={Gamepad2} size={size} />,
+  appstore: ({ size }) => <GradientIcon from="rgb(50,173,230)" to="rgb(10,92,255)" glyph={Store} size={size} />,
+  settings: ({ size }) => <GradientIcon from="rgb(142,142,147)" to="rgb(72,72,74)" glyph={Settings} size={size} />,
   downloads: ({ size }) => <DownloadsFolderIcon size={size} />,
   trash: ({ size }) => <TrashDockIcon size={size} />,
 };
@@ -257,18 +195,17 @@ interface DockItemDef {
 
 const DOCK_ITEMS: DockItemDef[] = [
   { id: 'finder', name: 'Finder', type: 'app' },
-  { id: '__sep1__', name: '', type: 'separator' },
   { id: 'apps', name: 'Apps', type: 'app' },
   { id: 'safari', name: 'Safari', type: 'app' },
   { id: 'messages', name: 'Messages', type: 'app', badge: 2 },
-  { id: 'mail', name: 'Mail', type: 'app', badge: 3 },
+  { id: 'mail', name: 'Mail', type: 'app', badge: 4 },
   { id: 'maps', name: 'Maps', type: 'app' },
   { id: 'photos', name: 'Photos', type: 'app' },
   { id: 'facetime', name: 'FaceTime', type: 'app' },
   { id: 'phone', name: 'Phone', type: 'app' },
   { id: 'calendar', name: 'Calendar', type: 'app' },
   { id: 'contacts', name: 'Contacts', type: 'app' },
-  { id: 'reminders', name: 'Reminders', type: 'app', badge: 2 },
+  { id: 'reminders', name: 'Reminders', type: 'app', badge: 3 },
   { id: 'notes', name: 'Notes', type: 'app' },
   { id: 'freeform', name: 'Freeform', type: 'app' },
   { id: 'music', name: 'Music', type: 'app' },
@@ -278,9 +215,9 @@ const DOCK_ITEMS: DockItemDef[] = [
   { id: 'games', name: 'Games', type: 'app' },
   { id: 'appstore', name: 'App Store', type: 'app', badge: 4 },
   { id: 'settings', name: 'System Settings', type: 'app' },
-  { id: '__sep2__', name: '', type: 'separator' },
+  { id: '__sep1__', name: '', type: 'separator' },
   { id: 'downloads', name: 'Downloads', type: 'stack' },
-  { id: '__sep3__', name: '', type: 'separator' },
+  { id: '__sep2__', name: '', type: 'separator' },
   { id: 'trash', name: 'Trash', type: 'app' },
 ];
 
@@ -298,7 +235,6 @@ export default function Dock({ onOpenApp, isAppOpen, onLaunchpad }: DockProps) {
   const [showDownloadsPopup, setShowDownloadsPopup] = useState(false);
   const dockRef = useRef<HTMLDivElement>(null);
 
-  // Only count actual dock-item elements for magnification
   const getIconSize = useCallback((index: number) => {
     if (hoveredIndex === null) return 48;
     const distance = Math.abs(index - hoveredIndex);
@@ -357,14 +293,15 @@ export default function Dock({ onOpenApp, isAppOpen, onLaunchpad }: DockProps) {
     <div className="absolute bottom-2 left-1/2 -translate-x-1/2" style={{ zIndex: 'var(--z-dock)' }}>
       <div
         ref={dockRef}
-        className="glass-dock lg-refract flex flex-row items-end rounded-[18px] px-2 pb-1 pt-1"
+        className="glass-dock lg-refract flex flex-row items-end rounded-[24px] p-[7px]"
+        style={{ gap: '4px' }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
         {DOCK_ITEMS.map((item, index) => {
           if (item.type === 'separator') {
             return (
-              <div key={item.id} className="dock-separator" />
+              <div key={item.id} className="dock-separator" style={{ margin: '0 6px' }} />
             );
           }
 
@@ -372,13 +309,21 @@ export default function Dock({ onOpenApp, isAppOpen, onLaunchpad }: DockProps) {
           const size = getIconSize(vi);
           const isOpen = item.type === 'app' && isAppOpen(item.id);
           const IconComponent = ICON_MAP[item.id];
+          const isHovered = hoveredIndex !== null && vi === hoveredIndex;
+          const isNearHovered = hoveredIndex !== null && Math.abs(vi - hoveredIndex) <= 2;
 
           return (
             <div
               key={item.id}
               data-dock-item
-              className="dock-icon relative flex flex-col items-center cursor-pointer"
-              style={{ width: size, height: size + 4 }}
+              className="relative flex flex-col items-center cursor-pointer"
+              style={{
+                width: size,
+                height: size + 6,
+                flexShrink: 0,
+                zIndex: isHovered ? 20 : isNearHovered ? 10 : 1,
+                transition: 'width 200ms cubic-bezier(0.32, 0.72, 0, 1), height 200ms cubic-bezier(0.32, 0.72, 0, 1)',
+              }}
               onMouseEnter={() => setShowTooltip(item.name)}
               onMouseLeave={() => setShowTooltip(null)}
               onClick={() => handleClick(item)}
@@ -402,10 +347,11 @@ export default function Dock({ onOpenApp, isAppOpen, onLaunchpad }: DockProps) {
 
               {/* Icon container */}
               <div
-                className="dock-icon w-full h-full flex items-center justify-center overflow-hidden"
+                className="w-full flex items-center justify-center overflow-hidden"
                 style={{
                   width: size,
                   height: size,
+                  transition: 'width 200ms cubic-bezier(0.32, 0.72, 0, 1), height 200ms cubic-bezier(0.32, 0.72, 0, 1)',
                 }}
               >
                 {IconComponent && <IconComponent size={size} />}
