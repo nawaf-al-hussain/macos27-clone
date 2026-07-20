@@ -233,6 +233,7 @@ export default function MacOS() {
             activeApp={APP_NAMES[activeApp] || 'Finder'}
             onSpotlight={() => { setShowSpotlight(true); setShowControlCenter(false); setShowNotifications(false); }}
             onControlCenter={() => { setShowControlCenter(prev => !prev); setShowNotifications(false); setShowSpotlight(false); }}
+            onNotifications={() => { setShowNotifications(prev => !prev); setShowControlCenter(false); setShowSpotlight(false); }}
           />
 
           {/* Windows */}

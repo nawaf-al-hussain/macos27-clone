@@ -16,6 +16,7 @@ interface MenuBarProps {
   activeApp: string;
   onSpotlight: () => void;
   onControlCenter: () => void;
+  onNotifications: () => void;
 }
 
 /* ─────────────── Menu Definitions ─────────────── */
@@ -806,7 +807,7 @@ function BatteryDropdown() {
 
 /* ─────────────── MenuBar Component ─────────────── */
 
-export default function MenuBar({ activeApp, onSpotlight, onControlCenter }: MenuBarProps) {
+export default function MenuBar({ activeApp, onSpotlight, onControlCenter, onNotifications }: MenuBarProps) {
   const [time, setTime] = useState(new Date());
   const [showAppleMenu, setShowAppleMenu] = useState(false);
   const [showMenu, setShowMenu] = useState<string | null>(null);
@@ -999,7 +1000,9 @@ export default function MenuBar({ activeApp, onSpotlight, onControlCenter }: Men
           style={{
             fontVariantNumeric: 'tabular-nums' as const,
             whiteSpace: 'pre' as const,
+            cursor: 'pointer',
           }}
+          onClick={onNotifications}
         >
           {clockStr}
         </div>

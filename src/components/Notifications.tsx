@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Check, Phone, CloudFog, ChevronRight, ListChecks } from 'lucide-react';
 
 interface NotificationsProps {
   onClose: () => void;
 }
 
 export default function Notifications({ onClose }: NotificationsProps) {
-  const [expanded, setExpanded] = useState(false);
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
@@ -16,498 +16,313 @@ export default function Notifications({ onClose }: NotificationsProps) {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-[600]" onClick={onClose}>
-      <div
-        className="absolute top-[32px] right-0 w-[360px] h-[calc(100vh-32px)] notification-slide flex flex-col"
-        style={{
-          background: 'rgba(40, 40, 40, 0.78)',
-          backdropFilter: 'blur(50px)',
-          WebkitBackdropFilter: 'blur(50px)',
-          borderLeft: '1px solid rgba(255,255,255,0.15)',
-          borderBottom: '1px solid rgba(255,255,255,0.15)',
-          boxShadow: '-10px 0 40px rgba(0,0,0,0.4)',
-        }}
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto overscroll-contain px-3 pt-3 pb-3 space-y-3">
-          {/* ── Notifications Section ── */}
-          <div className="space-y-2">
-            {/* Reminders notification */}
-            <div
-              className="rounded-xl p-3"
-              style={{
-                background: 'rgba(255,255,255,0.08)',
-                border: '1px solid rgba(255,255,255,0.1)',
-              }}
-            >
-              <div className="flex items-start gap-2.5">
-                {/* Reminders app icon */}
+    <div
+      className="absolute top-[28px] right-0 bottom-0 glass-panel lg-refract-strong overflow-visible"
+      style={{
+        width: 'var(--nc-w)',
+        borderRadius: 'var(--radius-cc-panel) 0 0 0',
+        animation: 'ncSlideIn 350ms var(--ease-ios)',
+        zIndex: 9200,
+      }}
+      onClick={e => e.stopPropagation()}
+    >
+      <div className="h-full overflow-y-auto p-3 flex flex-col gap-3">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <span className="text-[17px] font-semibold text-label">Notification Center</span>
+        </div>
+
+        {/* ── Notification Banners ── */}
+        {/* Reminders Banner */}
+        <div className="relative">
+          <div className="cursor-default">
+            <div className="glass-banner relative p-3" style={{ width: 'var(--banner-w)' }}>
+              <div className="flex gap-2.5">
                 <div
-                  className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-                  style={{ background: '#FF9500' }}
+                  className="os-icon grid place-items-center shrink-0"
+                  style={{ width: 36, height: 36, background: 'linear-gradient(rgb(255, 159, 107), rgb(247, 79, 158))' }}
                 >
-                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                    <path d="M4 2h10a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" fill="white" fillOpacity="0.9"/>
-                    <path d="M5 6h8M5 9h8M5 12h5" stroke="#FF9500" strokeWidth="1.2" strokeLinecap="round"/>
-                  </svg>
+                  <ListChecks size={20} strokeWidth={1.8} color="#fff" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[12px] font-semibold text-white/90">Reminders</span>
-                    <span className="text-[10px] text-white/40">7m ago</span>
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-[11px] uppercase tracking-wide text-label-2 font-medium">Reminders</span>
+                    <span className="text-[11px] text-label-3">5h ago</span>
                   </div>
-                  <div className="text-[13px] text-white/75 mt-0.5">Pick up dry cleaning</div>
-                  <div className="text-[11px] text-white/45 mt-0.5">5:30 PM</div>
-                  <button
-                    className="mt-2 px-3 py-1 rounded-md text-[11px] font-medium transition-colors"
-                    style={{
-                      background: 'rgba(10, 109, 255, 0.7)',
-                      color: '#fff',
-                    }}
-                  >
-                    Complete
-                  </button>
+                  <div className="text-[13px] font-semibold text-label truncate">Reminder</div>
+                  <div className="text-[13px] text-label-2" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    Prepare Q3 demo slides — 9:00 AM
+                  </div>
+                  <div className="flex gap-1.5 mt-1.5 flex-wrap">
+                    <div className="glass-pill px-2 py-[3px] text-[11px] text-label flex items-center gap-1">
+                      <Check size={12} />
+                      Complete
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* 2 more button (when collapsed) */}
-            {!expanded && (
-              <button
-                className="w-full py-1.5 rounded-lg text-[12px] text-white/50 hover:bg-white/8 transition-colors text-center"
-                onClick={() => setExpanded(true)}
-              >
-                2 more
-              </button>
-            )}
-
-            {/* Expanded notifications */}
-            {expanded && (
-              <div className="space-y-2">
+        {/* Phone Banner */}
+        <div className="relative">
+          <div className="cursor-default">
+            <div className="glass-banner relative p-3" style={{ width: 'var(--banner-w)' }}>
+              <div className="flex gap-2.5">
                 <div
-                  className="rounded-xl p-3"
-                  style={{
-                    background: 'rgba(255,255,255,0.08)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                  }}
+                  className="os-icon grid place-items-center shrink-0"
+                  style={{ width: 36, height: 36, background: 'linear-gradient(rgb(123, 248, 123), rgb(15, 209, 48))' }}
                 >
-                  <div className="flex items-start gap-2.5">
-                    <div
-                      className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-                      style={{ background: '#007AFF' }}
-                    >
-                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                        <rect x="2" y="3" width="14" height="12" rx="2" stroke="white" strokeWidth="1.2" fill="none"/>
-                        <path d="M2 7h14" stroke="white" strokeWidth="1" strokeOpacity="0.6"/>
-                        <rect x="4" y="9" width="3" height="2" rx="0.5" fill="white" fillOpacity="0.6"/>
-                        <rect x="8" y="9" width="5" height="1" rx="0.5" fill="white" fillOpacity="0.4"/>
-                      </svg>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[12px] font-semibold text-white/90">Calendar</span>
-                        <span className="text-[10px] text-white/40">32m ago</span>
-                      </div>
-                      <div className="text-[13px] text-white/75 mt-0.5">Sprint Planning</div>
-                      <div className="text-[11px] text-white/45 mt-0.5">Starting in 30 minutes</div>
-                    </div>
-                  </div>
+                  <Phone size={20} strokeWidth={1.8} color="#fff" />
                 </div>
-                <div
-                  className="rounded-xl p-3"
-                  style={{
-                    background: 'rgba(255,255,255,0.08)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                  }}
-                >
-                  <div className="flex items-start gap-2.5">
-                    <div
-                      className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-                      style={{ background: '#34C759' }}
-                    >
-                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                        <path d="M3 4h12a1 1 0 011 1v9a1 1 0 01-1 1H3a1 1 0 01-1-1V5a1 1 0 011-1z" stroke="white" strokeWidth="1.2"/>
-                        <path d="M3 7l6 4 6-4" stroke="white" strokeWidth="1.2" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[12px] font-semibold text-white/90">Mail</span>
-                        <span className="text-[10px] text-white/40">1h ago</span>
-                      </div>
-                      <div className="text-[13px] text-white/75 mt-0.5">Apple Developer</div>
-                      <div className="text-[11px] text-white/45 mt-0.5">WWDC 2025 Session videos available</div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-[11px] uppercase tracking-wide text-label-2 font-medium">Phone</span>
+                    <span className="text-[11px] text-label-3">20h ago</span>
+                  </div>
+                  <div className="text-[13px] font-semibold text-label truncate">Missed Call</div>
+                  <div className="text-[13px] text-label-2" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    Alex Rivera · (415) 555-0161
+                  </div>
+                  <div className="flex gap-1.5 mt-1.5 flex-wrap">
+                    <div className="glass-pill px-2 py-[3px] text-[11px] text-label">
+                      Call Back
                     </div>
                   </div>
                 </div>
               </div>
-            )}
-          </div>
-
-          {/* Divider */}
-          <div className="h-px bg-white/10" />
-
-          {/* ── Widgets Section ── */}
-          <div className="space-y-3">
-
-            {/* Calendar Widget */}
-            <CalendarWidget now={now} />
-
-            {/* Weather Widget */}
-            <WeatherWidget />
-
-            {/* Reminders Widget */}
-            <RemindersWidget />
-
-            {/* Stocks Widget */}
-            <StocksWidget />
-
-            {/* World Clock Widget */}
-            <WorldClockWidget now={now} />
-
-            {/* Screen Time Widget */}
-            <ScreenTimeWidget />
-
-            {/* Edit Widgets Button */}
-            <button
-              className="w-full py-2.5 rounded-xl text-[12px] font-medium text-white/50 hover:bg-white/8 transition-colors"
-              style={{ border: '1px solid rgba(255,255,255,0.1)' }}
-            >
-              Edit Widgets
-            </button>
+            </div>
           </div>
         </div>
+
+        {/* ── Widgets Grid ── */}
+        <div className="grid grid-cols-2 gap-3">
+          {/* Calendar Widget (col-span-2) */}
+          <div className="relative col-span-2">
+            <div className="w-full h-full">
+              <div className="glass-banner p-3 w-full h-full overflow-hidden cursor-default text-left" style={{ height: 160, animation: 'widgetIn 350ms var(--ease-ios)' }}>
+                <div className="flex h-full gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[12px] font-semibold" style={{ color: '#FF3B30' }}>July 2026</div>
+                    <CalendarGrid />
+                  </div>
+                  <div className="w-[110px] shrink-0 flex flex-col gap-1.5 justify-center">
+                    <CalendarEvent color="rgb(48, 209, 88)" title="Book club — Project Hail Mary" time="6:00 PM" />
+                    <CalendarEvent color="rgb(48, 209, 88)" title="Gym" time="7:00 AM" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Weather Widget */}
+          <div className="relative">
+            <div className="w-full h-full">
+              <div className="glass-banner p-3 w-full h-full overflow-hidden cursor-default text-left" style={{ height: 160, animation: 'widgetIn 350ms var(--ease-ios)', animationDelay: '40ms', animationFillMode: 'backwards' }}>
+                <div className="flex flex-col h-full">
+                  <div className="text-[13px] font-semibold text-label flex items-center gap-1">Cupertino</div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <CloudFog size={30} className="text-label-2" />
+                    <span className="text-[30px] font-light text-label leading-none">59°</span>
+                  </div>
+                  <div className="mt-auto text-[11px] text-label-2">Fog</div>
+                  <div className="text-[11px] text-label-2">H:83°  L:59°</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Reminders Widget */}
+          <div className="relative">
+            <div className="w-full h-full">
+              <div className="glass-banner p-3 w-full h-full overflow-hidden cursor-default text-left" style={{ height: 160, animation: 'widgetIn 350ms var(--ease-ios)', animationDelay: '80ms', animationFillMode: 'backwards' }}>
+                <div className="flex flex-col h-full">
+                  <div className="text-[13px] font-semibold text-label">Today</div>
+                  <div className="mt-1.5 flex flex-col gap-1.5">
+                    <ReminderItem text="Send brand review feedback to Maya" />
+                    <ReminderItem text="Review PR #142 — genie animation" />
+                    <ReminderItem text="Pick up dry cleaning" />
+                  </div>
+                  <div className="mt-auto text-[10px] text-label-3 flex items-center gap-0.5">
+                    4 remaining
+                    <ChevronRight size={12} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Stocks Widget */}
+          <div className="relative">
+            <div className="w-full h-full">
+              <div className="glass-banner p-3 w-full h-full overflow-hidden cursor-default text-left" style={{ height: 160, animation: 'widgetIn 350ms var(--ease-ios)', animationDelay: '120ms', animationFillMode: 'backwards' }}>
+                <div className="flex flex-col h-full justify-between py-0.5">
+                  <StockRow symbol="AAPL" name="Apple Inc." price="232.40" change="+12.02%" up={true} />
+                  <StockRow symbol="MSFT" name="Microsoft Corp." price="505.80" change="+3.52%" up={true} />
+                  <StockRow symbol="NVDA" name="NVIDIA Corp." price="168.25" change="-6.22%" up={false} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* World Clock Widget */}
+          <div className="relative">
+            <div className="w-full h-full">
+              <div className="glass-banner p-3 w-full h-full overflow-hidden cursor-default text-left" style={{ height: 160, animation: 'widgetIn 350ms var(--ease-ios)', animationDelay: '160ms', animationFillMode: 'backwards' }}>
+                <div className="flex flex-col h-full justify-center gap-1.5">
+                  <ClockRow city="Cupertino" tz="America/Los_Angeles" now={now} />
+                  <ClockRow city="New York" tz="America/New_York" now={now} />
+                  <ClockRow city="Tokyo" tz="Asia/Tokyo" now={now} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Screen Time Widget (col-span-2) */}
+          <div className="relative col-span-2">
+            <div className="w-full h-full">
+              <div className="glass-banner p-3 w-full h-full overflow-hidden cursor-default text-left" style={{ height: 160, animation: 'widgetIn 350ms var(--ease-ios)', animationDelay: '200ms', animationFillMode: 'backwards' }}>
+                <div className="flex flex-col h-full">
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-[11px] text-label-2">Screen Time</span>
+                    <span className="text-[15px] font-semibold text-label" style={{ fontVariantNumeric: 'tabular-nums' }}>3h 42m today</span>
+                  </div>
+                  <div className="mt-auto flex items-end gap-[5px] h-[52px]">
+                    <ScreenBar pct={42} accent={false} />
+                    <ScreenBar pct={68} accent={false} />
+                    <ScreenBar pct={55} accent={false} />
+                    <ScreenBar pct={74} accent={true} />
+                    <ScreenBar pct={38} accent={false} />
+                    <ScreenBar pct={61} accent={false} />
+                    <ScreenBar pct={52} accent={false} />
+                  </div>
+                  <div className="flex justify-between text-[7px] text-label-3 mt-0.5">
+                    <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Edit Widgets */}
+        <div className="flex-1" />
+        <button className="text-[11px] text-label-2 py-1 hover:text-label self-center transition-colors">
+          Edit Widgets
+        </button>
       </div>
     </div>
   );
 }
 
-/* ═══════════════ Calendar Widget ═══════════════ */
+/* ═══════════════ Calendar Grid ═══════════════ */
 
-function CalendarWidget({ now }: { now: Date }) {
+function CalendarGrid() {
   const year = 2026;
   const month = 6; // July (0-indexed)
-  const today = now.getDate() === 1 ? 1 : 2; // show a highlighted day
+  const today = 20;
 
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const monthLabel = 'July 2026';
 
   const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   const cells: (number | null)[] = [];
   for (let i = 0; i < firstDay; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
-  // Events for this widget
-  const events = [
-    { day: 3, label: 'Sprint planning', color: '#FF3B30' },
-    { day: 7, label: 'Dentist', color: '#FF9500' },
-  ];
-
   return (
-    <div className="rounded-2xl p-3" style={{
-      backdropFilter: 'blur(28px) saturate(170%)',
-      WebkitBackdropFilter: 'blur(28px) saturate(170%)',
-      background: 'rgba(248, 248, 250, 0.78)',
-      boxShadow: '0 10px 32px rgba(0,0,0,0.15)',
-    }}>
-      <div className="text-[12px] font-semibold" style={{ color: '#FF3B30' }}>
-        {monthLabel}
-      </div>
-      <div className="grid grid-cols-7 gap-0 mt-1.5 text-center">
-        {dayLabels.map((d, i) => (
-          <div key={i} className="text-[8px] font-semibold" style={{ color: 'rgba(0,0,0,0.35)' }}>
-            {d}
-          </div>
-        ))}
-        {cells.map((day, i) => {
-          const ev = events.find(e => e.day === day);
-          return (
-            <div
-              key={i}
-              className="text-[9px] leading-[18px] relative"
-              style={{ color: day ? 'rgba(0,0,0,0.75)' : 'transparent' }}
-            >
+    <div className="grid grid-cols-7 gap-0 mt-1 text-center">
+      {dayLabels.map((d, i) => (
+        <div key={i} className="text-[8px] font-semibold text-label-3">{d}</div>
+      ))}
+      {cells.map((day, i) => (
+        <div key={i} className="text-[9px] leading-[16px] text-label relative">
+          {day}
+          {day === today && (
+            <span className="inline-grid place-items-center w-4 h-4 rounded-full bg-[#FF3B30] text-white absolute -top-[2px] left-1/2 -translate-x-1/2 text-[9px] leading-[16px]">
               {day}
-              {ev && (
-                <span
-                  className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
-                  style={{ background: ev.color }}
-                />
-              )}
-            </div>
-          );
-        })}
-      </div>
-      {/* Event indicators */}
-      <div className="mt-2 space-y-1">
-        {events.map((ev, i) => (
-          <div key={i} className="flex items-center gap-1.5">
-            <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: ev.color }} />
-            <span className="text-[9px] truncate" style={{ color: 'rgba(0,0,0,0.55)' }}>
-              {ev.label}
             </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ═══════════════ Weather Widget ═══════════════ */
-
-function WeatherWidget() {
-  return (
-    <div className="rounded-2xl p-3" style={{
-      backdropFilter: 'blur(28px) saturate(170%)',
-      WebkitBackdropFilter: 'blur(28px) saturate(170%)',
-      background: 'rgba(248, 248, 250, 0.78)',
-      boxShadow: '0 10px 32px rgba(0,0,0,0.15)',
-    }}>
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="text-[13px] font-semibold" style={{ color: 'rgba(0,0,0,0.75)' }}>
-            Cupertino
-          </div>
-          <div className="text-[11px]" style={{ color: 'rgba(0,0,0,0.5)' }}>
-            Partly Cloudy
-          </div>
+          )}
         </div>
-        <div className="flex items-center gap-2">
-          <svg width={28} height={28} viewBox="0 0 24 24" fill="none">
-            <circle cx="9" cy="10" r="4" fill="#FFD60A" />
-            <path d="M9 4v2M9 14v2M3 10h2M13 10h2M4.76 4.76l1.41 1.41M11.83 11.83l1.41 1.41M4.76 15.24l1.41-1.41M11.83 8.17l1.41-1.41" stroke="#FFD60A" strokeWidth="1.3" strokeLinecap="round" />
-            <path d="M17 17H8.5a3.5 3.5 0 01-.3-6.98A4.5 4.5 0 0117.3 9.5c.17 0 .33.01.5.03A3 3 0 0117 17z" fill="#B0B0B8" />
-          </svg>
-          <span className="text-[24px] font-light leading-none" style={{ color: 'rgba(0,0,0,0.85)' }}>
-            68°
-          </span>
-        </div>
-      </div>
+      ))}
     </div>
   );
 }
 
-/* ═══════════════ Reminders Widget ═══════════════ */
+/* ═══════════════ Calendar Event ═══════════════ */
 
-function RemindersWidget() {
-  const items = [
-    { text: 'Send brand review feedback', done: false },
-    { text: 'Pick up dry cleaning', done: false },
-    { text: 'Call dentist to reschedule', done: true },
-  ];
-
+function CalendarEvent({ color, title, time }: { color: string; title: string; time: string }) {
   return (
-    <div className="rounded-2xl p-3" style={{
-      backdropFilter: 'blur(28px) saturate(170%)',
-      WebkitBackdropFilter: 'blur(28px) saturate(170%)',
-      background: 'rgba(248, 248, 250, 0.78)',
-      boxShadow: '0 10px 32px rgba(0,0,0,0.15)',
-    }}>
-      <div className="flex items-center gap-1.5 mb-2">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-          <circle cx="6" cy="6" r="5" stroke="#FF9500" strokeWidth="1.5" fill="none"/>
-          <path d="M4 6l1.5 1.5L8 5" stroke="#FF9500" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-        <span className="text-[11px] font-semibold" style={{ color: 'rgba(0,0,0,0.5)' }}>Reminders</span>
-      </div>
-      <div className="space-y-1.5">
-        {items.map((item, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <div
-              className="w-4 h-4 rounded-full border shrink-0 flex items-center justify-center"
-              style={{
-                borderColor: item.done ? '#FF9500' : 'rgba(0,0,0,0.25)',
-                background: item.done ? '#FF9500' : 'transparent',
-              }}
-            >
-              {item.done && (
-                <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-                  <path d="M2 4l1.5 1.5L6 3" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              )}
-            </div>
-            <span
-              className="text-[11px]"
-              style={{
-                color: item.done ? 'rgba(0,0,0,0.35)' : 'rgba(0,0,0,0.75)',
-                textDecoration: item.done ? 'line-through' : 'none',
-              }}
-            >
-              {item.text}
-            </span>
-          </div>
-        ))}
+    <div className="flex gap-1.5 items-start">
+      <div className="w-[3px] self-stretch rounded-full mt-[1px]" style={{ background: color }} />
+      <div className="min-w-0">
+        <div className="text-[10px] font-medium text-label truncate">{title}</div>
+        <div className="text-[9px] text-label-2">{time}</div>
       </div>
     </div>
   );
 }
 
-/* ═══════════════ Stocks Widget ═══════════════ */
+/* ═══════════════ Reminder Item ═══════════════ */
 
-function StocksWidget() {
-  const stocks = [
-    { symbol: 'AAPL', price: '229.86', change: '+1.23%', up: true },
-    { symbol: 'MSFT', price: '448.22', change: '+0.67%', up: true },
-    { symbol: 'NVDA', price: '131.44', change: '-0.89%', up: false },
-  ];
-
+function ReminderItem({ text }: { text: string }) {
   return (
-    <div className="rounded-2xl p-3" style={{
-      backdropFilter: 'blur(28px) saturate(170%)',
-      WebkitBackdropFilter: 'blur(28px) saturate(170%)',
-      background: 'rgba(248, 248, 250, 0.78)',
-      boxShadow: '0 10px 32px rgba(0,0,0,0.15)',
-    }}>
-      <div className="flex items-center gap-1.5 mb-2">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-          <path d="M1 9l3-4 2 2 3-4 2 2" stroke="rgba(0,0,0,0.5)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-        <span className="text-[11px] font-semibold" style={{ color: 'rgba(0,0,0,0.5)' }}>Stocks</span>
+    <div className="flex items-center gap-1.5 text-left">
+      <div
+        className="w-4 h-4 rounded-full border grid place-items-center shrink-0"
+        style={{ borderColor: 'var(--label-3)', background: 'transparent' }}
+      />
+      <span className="text-[11px] text-label truncate">{text}</span>
+    </div>
+  );
+}
+
+/* ═══════════════ Stock Row ═══════════════ */
+
+function StockRow({ symbol, name, price, change, up }: { symbol: string; name: string; price: string; change: string; up: boolean }) {
+  return (
+    <div className="flex items-center gap-2">
+      <div className="w-[64px]">
+        <div className="text-[12px] font-semibold text-label">{symbol}</div>
+        <div className="text-[9px] text-label-3 truncate">{name}</div>
       </div>
-      <div className="space-y-2">
-        {stocks.map((s, i) => (
-          <div key={i} className="flex items-center justify-between">
-            <span className="text-[12px] font-semibold" style={{ color: 'rgba(0,0,0,0.8)' }}>
-              {s.symbol}
-            </span>
-            <div className="flex items-center gap-2">
-              <span className="text-[11px]" style={{ color: 'rgba(0,0,0,0.6)' }}>
-                {s.price}
-              </span>
-              <span
-                className="text-[10px] font-medium px-1.5 py-0.5 rounded"
-                style={{
-                  background: s.up ? 'rgba(52,199,89,0.15)' : 'rgba(255,59,48,0.15)',
-                  color: s.up ? '#34C759' : '#FF3B30',
-                }}
-              >
-                {s.change}
-              </span>
-            </div>
-          </div>
-        ))}
+      <div className="shrink-0 ml-auto text-right">
+        <div className="text-[12px] font-medium text-label" style={{ fontVariantNumeric: 'tabular-nums' }}>{price}</div>
+        <div className="text-[9px]" style={{ fontVariantNumeric: 'tabular-nums', color: up ? 'rgb(48, 209, 88)' : 'rgb(255, 69, 58)' }}>{change}</div>
       </div>
     </div>
   );
 }
 
-/* ═══════════════ World Clock Widget ═══════════════ */
+/* ═══════════════ Clock Row ═══════════════ */
 
-function WorldClockWidget({ now }: { now: Date }) {
-  const cupertino = now.toLocaleTimeString('en-US', {
-    timeZone: 'America/Los_Angeles',
+function ClockRow({ city, tz, now }: { city: string; tz: string; now: Date }) {
+  const time = now.toLocaleTimeString('en-US', {
+    timeZone: tz,
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
   });
 
-  const newYork = now.toLocaleTimeString('en-US', {
-    timeZone: 'America/New_York',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
-
-  const tokyo = now.toLocaleTimeString('en-US', {
-    timeZone: 'Asia/Tokyo',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
-
-  const clocks = [
-    { city: 'Cupertino', time: cupertino },
-    { city: 'New York', time: newYork },
-    { city: 'Tokyo', time: tokyo },
-  ];
-
   return (
-    <div className="rounded-2xl p-3" style={{
-      backdropFilter: 'blur(28px) saturate(170%)',
-      WebkitBackdropFilter: 'blur(28px) saturate(170%)',
-      background: 'rgba(248, 248, 250, 0.78)',
-      boxShadow: '0 10px 32px rgba(0,0,0,0.15)',
-    }}>
-      <div className="flex items-center gap-1.5 mb-2">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-          <circle cx="6" cy="6" r="4.5" stroke="rgba(0,0,0,0.5)" strokeWidth="1"/>
-          <path d="M6 3.5v3l2 1" stroke="rgba(0,0,0,0.5)" strokeWidth="0.8" strokeLinecap="round"/>
-        </svg>
-        <span className="text-[11px] font-semibold" style={{ color: 'rgba(0,0,0,0.5)' }}>World Clock</span>
-      </div>
-      <div className="space-y-1.5">
-        {clocks.map((c, i) => (
-          <div key={i} className="flex items-center justify-between">
-            <span className="text-[11px]" style={{ color: 'rgba(0,0,0,0.55)' }}>
-              {c.city}
-            </span>
-            <span className="text-[13px] font-medium" style={{ color: 'rgba(0,0,0,0.85)' }}>
-              {c.time}
-            </span>
-          </div>
-        ))}
-      </div>
+    <div className="flex items-baseline justify-between">
+      <span className="text-[11px] text-label-2">{city}</span>
+      <span className="text-[13px] font-medium text-label" style={{ fontVariantNumeric: 'tabular-nums' }}>{time}</span>
     </div>
   );
 }
 
-/* ═══════════════ Screen Time Widget ═══════════════ */
+/* ═══════════════ Screen Time Bar ═══════════════ */
 
-function ScreenTimeWidget() {
-  // Weekly bar chart data (Mon-Sun), taller = more usage
-  const weeklyData = [65, 50, 70, 80, 45, 30, 20];
-  const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-  const maxVal = Math.max(...weeklyData);
-
+function ScreenBar({ pct, accent }: { pct: number; accent: boolean }) {
   return (
-    <div className="rounded-2xl p-3" style={{
-      backdropFilter: 'blur(28px) saturate(170%)',
-      WebkitBackdropFilter: 'blur(28px) saturate(170%)',
-      background: 'rgba(248, 248, 250, 0.78)',
-      boxShadow: '0 10px 32px rgba(0,0,0,0.15)',
-    }}>
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-1.5">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M2 10a1 1 0 01-1-1V3a1 1 0 011-1h8a1 1 0 011 1v6a1 1 0 01-1 1H2z" stroke="rgba(0,0,0,0.5)" strokeWidth="1" fill="none"/>
-            <path d="M2 7h8" stroke="rgba(0,0,0,0.4)" strokeWidth="0.8"/>
-            <circle cx="9" cy="4.5" r="0.8" fill="rgba(0,0,0,0.5)"/>
-          </svg>
-          <span className="text-[11px] font-semibold" style={{ color: 'rgba(0,0,0,0.5)' }}>Screen Time</span>
-        </div>
-        <span className="text-[11px]" style={{ color: 'rgba(0,0,0,0.45)' }}>today</span>
-      </div>
-
-      <div className="text-[20px] font-light leading-none" style={{ color: 'rgba(0,0,0,0.85)' }}>
-        3h 42m
-      </div>
-
-      {/* Weekly bar chart */}
-      <div className="flex items-end gap-[6px] mt-3 h-[40px]">
-        {weeklyData.map((val, i) => {
-          const height = (val / maxVal) * 100;
-          return (
-            <div key={i} className="flex-1 flex flex-col items-center gap-1">
-              <div
-                className="w-full rounded-sm"
-                style={{
-                  height: `${height}%`,
-                  minHeight: 3,
-                  background: i === 3
-                    ? 'rgba(10, 109, 255, 0.8)'
-                    : 'rgba(0,0,0,0.12)',
-                  borderRadius: 2,
-                }}
-              />
-              <span className="text-[7px]" style={{ color: 'rgba(0,0,0,0.35)' }}>
-                {dayLabels[i]}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+    <div
+      className="flex-1 rounded-[2px]"
+      style={{
+        height: `${pct}%`,
+        background: accent ? 'var(--accent)' : 'var(--accent-selection)',
+      }}
+    />
   );
 }
