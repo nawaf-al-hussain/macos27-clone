@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { Wifi, BatteryMedium, Search, SlidersHorizontal } from 'lucide-react';
 
 /* ─────────────── Types ─────────────── */
 
@@ -15,7 +16,6 @@ interface MenuBarProps {
   activeApp: string;
   onSpotlight: () => void;
   onControlCenter: () => void;
-  onNotifications: () => void;
 }
 
 /* ─────────────── Menu Definitions ─────────────── */
@@ -806,13 +806,13 @@ function BatteryDropdown() {
 
 /* ─────────────── MenuBar Component ─────────────── */
 
-export default function MenuBar({ activeApp, onSpotlight, onControlCenter, onNotifications }: MenuBarProps) {
+export default function MenuBar({ activeApp, onSpotlight, onControlCenter }: MenuBarProps) {
   const [time, setTime] = useState(new Date());
   const [showAppleMenu, setShowAppleMenu] = useState(false);
   const [showMenu, setShowMenu] = useState<string | null>(null);
   const [showWifi, setShowWifi] = useState(false);
   const [showBattery, setShowBattery] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const [dropdownAnchor, setDropdownAnchor] = useState<{ top: number; left: number } | null>(null);
   const menuBarRef = useRef<HTMLDivElement>(null);
 
   const menuConfig = getAppMenuConfig(activeApp);
@@ -827,6 +827,7 @@ export default function MenuBar({ activeApp, onSpotlight, onControlCenter, onNot
     setShowMenu(null);
     setShowWifi(false);
     setShowBattery(false);
+    setDropdownAnchor(null);
   }, []);
 
   useEffect(() => {
@@ -839,7 +840,7 @@ export default function MenuBar({ activeApp, onSpotlight, onControlCenter, onNot
     return () => document.removeEventListener('mousedown', handleClick);
   }, [closeAllMenus]);
 
-  // Clock format: "Fri Jul 17  8:XX PM"
+  // Clock format: "Mon Jul 20  6:27 PM"
   const dayStr = time.toLocaleDateString('en-US', { weekday: 'short' });
   const monthStr = time.toLocaleDateString('en-US', { month: 'short' });
   const dateNum = time.getDate();
@@ -847,160 +848,185 @@ export default function MenuBar({ activeApp, onSpotlight, onControlCenter, onNot
   // Double space between date and time
   const clockStr = `${dayStr} ${monthStr} ${dateNum}  ${timeStr}`;
 
-  const handleMenuClick = useCallback((menuId: string) => {
+  const getAnchor = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setDropdownAnchor({ top: rect.bottom + 4, left: rect.left });
+  };
+
+  const handleMenuClick = useCallback((menuId: string, e: React.MouseEvent<HTMLButtonElement>) => {
     if (showMenu === menuId) {
       setShowMenu(null);
+      setDropdownAnchor(null);
     } else {
       setShowAppleMenu(false);
       setShowMenu(menuId);
       setShowWifi(false);
       setShowBattery(false);
+      getAnchor(e);
     }
   }, [showMenu]);
 
-  const handleAppleClick = useCallback(() => {
+  const handleAppleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     if (showAppleMenu) {
       setShowAppleMenu(false);
+      setDropdownAnchor(null);
     } else {
       setShowAppleMenu(true);
       setShowMenu(null);
       setShowWifi(false);
       setShowBattery(false);
+      getAnchor(e);
     }
   }, [showAppleMenu]);
 
   const handleWifiClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    setShowWifi(prev => !prev);
-    setShowAppleMenu(false);
-    setShowMenu(null);
-    setShowBattery(false);
-  }, []);
+    if (showWifi) {
+      setShowWifi(false);
+      setDropdownAnchor(null);
+    } else {
+      setShowWifi(true);
+      setShowAppleMenu(false);
+      setShowMenu(null);
+      setShowBattery(false);
+      getAnchor(e);
+    }
+  }, [showWifi]);
 
   const handleBatteryClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    setShowBattery(prev => !prev);
-    setShowAppleMenu(false);
-    setShowMenu(null);
-    setShowWifi(false);
-  }, []);
+    if (showBattery) {
+      setShowBattery(false);
+      setDropdownAnchor(null);
+    } else {
+      setShowBattery(true);
+      setShowAppleMenu(false);
+      setShowMenu(null);
+      setShowWifi(false);
+      getAnchor(e);
+    }
+  }, [showBattery]);
+
+  const dropdownStyle: React.CSSProperties = dropdownAnchor
+    ? { position: 'fixed', top: dropdownAnchor.top, left: dropdownAnchor.left }
+    : { display: 'none' };
 
   return (
+    <>
     <div
       ref={menuBarRef}
-      className="glass-menubar absolute top-0 left-0 right-0 h-[28px] flex items-center px-2 text-[13px] font-normal"
-      style={{ zIndex: 'var(--z-menubar)' }}
+      className="glass-menubar fixed top-0 left-0 right-0 flex items-center px-2 select-none"
+      data-solid="false"
+      style={{
+        height: 'var(--menubar-h)',
+        zIndex: 'var(--z-menubar)',
+        fontSize: '14px',
+        transform: 'translateY(0)',
+        transition: 'transform 300ms var(--ease-out-strong)',
+      }}
     >
       {/* Apple Logo */}
-      <div className="relative">
-        <button
-          className="px-2 py-0.5 rounded hover:bg-white/10 text-white/90"
-          onClick={handleAppleClick}
-        >
-          <svg width="14" height="17" viewBox="0 0 14 17" fill="white" fillOpacity="0.9">
-            <path d="M13.1 12.6c-.3.7-.7 1.3-1.1 1.8-.6.8-1.1 1.3-1.5 1.6-.6.5-1.3.7-2 .7-.5 0-1.1-.1-1.8-.4-.7-.3-1.3-.4-1.9-.4s-1.2.1-1.9.4C2.2 16.6 1.7 16.7 1.2 16.7c-.7 0-1.3-.3-2-.8C-.4 15.5-.8 15-1.4 14.1c-.6-.9-1.1-2-1.5-3.2-.4-1.3-.6-2.5-.6-3.7 0-1.4.3-2.5.9-3.4.5-.7 1.1-1.3 1.9-1.7.8-.4 1.7-.6 2.6-.6.5 0 1.2.2 2 .5.8.3 1.3.5 1.5.5.2 0 .7-.2 1.6-.6.9-.3 1.6-.5 2.2-.4 1.6.1 2.8.8 3.6 2-1.4.9-2.1 2.1-2.1 3.7 0 1.2.5 2.3 1.3 3.1.4.4.8.7 1.3.9-.1.3-.2.6-.4.9zM9.5.4C9.5 1.5 9.1 2.5 8.3 3.4 7.3 4.5 6.1 5.2 4.8 5c0-.1 0-.3 0-.4 0-1 .4-2 1.2-2.8.4-.4.9-.8 1.5-1 .6-.3 1.2-.4 1.7-.4.1.1.2.1.3 0z" transform="translate(1.5, 0.5)"/>
-          </svg>
-        </button>
-        {showAppleMenu && (
-          <div className="absolute top-[26px] left-[2px] z-[600]">
-            <DropdownMenu items={menuConfig.menus[0].items} />
-          </div>
-        )}
-      </div>
+      <button
+        className="menubar-item"
+        data-menu-id="Apple"
+        onClick={handleAppleClick}
+      >
+        <svg width="15" height="15" viewBox="0 0 898 1024" fill="var(--label)">
+          <path d="M898.1 348.1c-2.2-14.3-14.3-25.3-28.6-25.3H648.6c-7.7-59.2-34.5-114.2-78.5-156.1-52.1-49.9-120.3-77.4-192.1-77.4s-140 27.5-192.1 77.4c-44 41.9-70.8 96.9-78.5 156.1H28.5C14.3 322.8 2.2 333.8 0 348.1c-0.7 4.4 0.5 8.8 2.9 12.5l434.1 658.4c5.5 8.3 14.8 13.3 24.8 13.3h0.1c10 0 19.3-5 24.8-13.3l408.6-619.7c0 0 0 0 0.1-0.1l25.4-38.5c2.5-3.8 3.7-8.2 2.9-12.6zm-134.9 10.2L462 927.1 52.9 358.3h710.3zM377.9 200.2c39.3-37.6 90.9-58.3 145.2-58.3s105.9 20.7 145.2 58.3c33.9 32.5 56.1 75.4 63.7 121.5H314.2c7.6-46.1 29.8-89 63.7-121.5z"/>
+        </svg>
+      </button>
 
       {/* Active App Name */}
-      <span className="px-2 py-0.5 font-semibold text-white/90">{activeApp}</span>
+      <span className="menubar-item font-semibold menubar-text">{activeApp}</span>
 
       {/* Menu Items */}
       {menuConfig.menus.slice(1).map((menu) => (
-        <div key={menu.id} className="relative">
-          <button
-            className="px-2 py-0.5 rounded hover:bg-white/10 text-white/80"
-            onClick={() => handleMenuClick(menu.id)}
-          >
-            {menu.label}
-          </button>
-          {showMenu === menu.id && (
-            <div className="absolute top-[26px] left-0 z-[600]">
-              <DropdownMenu items={menu.items} />
-            </div>
-          )}
-        </div>
+        <button
+          key={menu.id}
+          className="menubar-item menubar-text"
+          data-menu-id={menu.id}
+          onClick={(e) => handleMenuClick(menu.id, e)}
+        >
+          {menu.label}
+        </button>
       ))}
 
       <div className="flex-1" />
 
       {/* Right side items */}
-      <div className="flex items-center gap-1 text-white/80" ref={menuBarRef}>
-        {/* Battery */}
-        <div className="relative">
-          <button
-            className="flex items-center gap-1 px-1.5 py-0.5 rounded hover:bg-white/10"
-            onClick={handleBatteryClick}
-          >
-            <svg width="18" height="10" viewBox="0 0 18 10" fill="none" className="text-white/80">
-              <rect x="0.5" y="0.5" width="15" height="9" rx="2" stroke="currentColor" strokeOpacity="0.5"/>
-              <rect x="16" y="3" width="2" height="4" rx="0.5" fill="currentColor" fillOpacity="0.4"/>
-              <rect x="2" y="2" width="11" height="6" rx="1" fill="currentColor" fillOpacity="0.8"/>
-            </svg>
-          </button>
-          {showBattery && (
-            <div className="absolute top-[26px] right-0 z-[600]">
-              <BatteryDropdown />
-            </div>
-          )}
-        </div>
-
+      <div className="flex items-center">
         {/* Wi-Fi */}
-        <div className="relative">
-          <button
-            className="px-1.5 py-0.5 rounded hover:bg-white/10"
-            onClick={handleWifiClick}
-          >
-            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor" fillOpacity="0.8">
-              <path d="M8 10.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" transform="translate(0,-2)"/>
-              <path d="M4.5 8.5a5 5 0 017 0" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" transform="translate(0,-1)"/>
-              <path d="M1.5 5.5a9 9 0 0113 0" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-            </svg>
-          </button>
-          {showWifi && (
-            <div className="absolute top-[26px] right-0 z-[600]">
-              <WifiDropdown />
-            </div>
-          )}
-        </div>
+        <button
+          className="menubar-item"
+          onClick={handleWifiClick}
+        >
+          <Wifi size={15} style={{ color: 'var(--label)' }} />
+        </button>
+
+        {/* Battery */}
+        <button
+          className="menubar-item"
+          onClick={handleBatteryClick}
+        >
+          <BatteryMedium size={19} style={{ color: 'var(--label)' }} />
+        </button>
 
         {/* Spotlight */}
-        <button className="px-1.5 py-0.5 rounded hover:bg-white/10" onClick={onSpotlight}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <circle cx="6" cy="6" r="4.5"/>
-            <line x1="9.5" y1="9.5" x2="13" y2="13" strokeLinecap="round"/>
-          </svg>
+        <button className="menubar-item" onClick={onSpotlight}>
+          <Search size={14} style={{ color: 'var(--label)' }} />
+        </button>
+
+        {/* Siri */}
+        <button className="menubar-item" style={{ padding: '0 6px' }}>
+          <div
+            style={{
+              width: '16px',
+              height: '16px',
+              borderRadius: '50%',
+              background: 'conic-gradient(from 0deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3, #ff6b6b)',
+            }}
+          />
         </button>
 
         {/* Control Center */}
-        <button className="px-1.5 py-0.5 rounded hover:bg-white/10" onClick={onControlCenter}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" fillOpacity="0.8">
-            <rect x="1" y="1" width="5" height="5" rx="1.5"/>
-            <rect x="8" y="1" width="5" height="5" rx="1.5"/>
-            <rect x="1" y="8" width="5" height="5" rx="1.5"/>
-            <rect x="8" y="8" width="5" height="5" rx="1.5"/>
-          </svg>
-        </button>
-
-        {/* Notifications */}
-        <button className="px-1.5 py-0.5 rounded hover:bg-white/10" onClick={onNotifications}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" fillOpacity="0.8">
-            <path d="M7 1a4 4 0 00-4 4v3l-1 2h10l-1-2V5a4 4 0 00-4-4z"/>
-            <path d="M5.5 11a1.5 1.5 0 003 0"/>
-          </svg>
+        <button className="menubar-item" onClick={onControlCenter}>
+          <SlidersHorizontal size={14} style={{ color: 'var(--label)' }} />
         </button>
 
         {/* Clock */}
-        <div className="px-2 py-0.5 rounded hover:bg-white/10 text-white/90 whitespace-nowrap">
+        <div
+          className="menubar-item menubar-text"
+          style={{
+            fontVariantNumeric: 'tabular-nums' as const,
+            whiteSpace: 'pre' as const,
+          }}
+        >
           {clockStr}
         </div>
       </div>
     </div>
+
+    {/* Dropdowns (rendered outside the menubar for proper fixed positioning) */}
+    {showAppleMenu && dropdownAnchor && (
+      <div style={dropdownStyle} className="z-[9200]">
+        <DropdownMenu items={menuConfig.menus[0].items} />
+      </div>
+    )}
+    {showMenu && dropdownAnchor && (
+      <div style={dropdownStyle} className="z-[9200]">
+        <DropdownMenu items={menuConfig.menus.find(m => m.id === showMenu)?.items || []} />
+      </div>
+    )}
+    {showWifi && dropdownAnchor && (
+      <div style={dropdownStyle} className="z-[9200]">
+        <WifiDropdown />
+      </div>
+    )}
+    {showBattery && dropdownAnchor && (
+      <div style={dropdownStyle} className="z-[9200]">
+        <BatteryDropdown />
+      </div>
+    )}
+    </>
   );
 }

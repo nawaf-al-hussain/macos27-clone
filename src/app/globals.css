@@ -14,7 +14,10 @@
 :root {
   /* Z-index layers */
   --z-desktop: 100;
-  --z-menubar: 9000;
+  --z-menubar: 9100;
+
+  /* Menu bar */
+  --menubar-h: 28px;
   --z-dock: 9500;
   --z-appswitcher: 9600;
   --z-lock: 10000;
@@ -48,6 +51,14 @@
   --macos-traffic-green: #28c840;
   --background: #000000;
   --foreground: #ffffff;
+
+  /* Semantic label colors */
+  --label: rgba(255, 255, 255, 0.85);
+  --label-2: rgba(255, 255, 255, 0.55);
+  --label-3: rgba(255, 255, 255, 0.35);
+  --separator: rgba(255, 255, 255, 0.12);
+  --accent: #0a84ff;
+  --ease-out-strong: cubic-bezier(0.2, 0, 0, 1);
 }
 
 @layer base {
@@ -162,6 +173,27 @@
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.menubar-item {
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  border-radius: 4px;
+  cursor: default;
+  color: var(--label);
+  transition: background 0.1s;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+.menubar-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.menubar-text {
+  color: var(--label);
 }
 
 .glass-spotlight {
