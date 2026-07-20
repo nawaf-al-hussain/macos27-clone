@@ -152,10 +152,8 @@
 
 .glass-dock {
   background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.1), 0 8px 40px rgba(0, 0, 0, 0.4);
+  border-radius: 24px;
+  padding: 7px;
   overflow: visible;
 }
 
@@ -218,12 +216,25 @@
 }
 
 .dock-icon {
-  max-width: 96px;
+  transition: none;
   will-change: width, height;
 }
 
+.os-icon {
+  border-radius: 10.7376px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.18), inset 0 0 0 0.5px rgba(255,255,255,0.25);
+}
+
 .lg-refract {
-  filter: url(#lg-refraction);
+  backdrop-filter: url("#lg-refraction") blur(24px) saturate(170%);
+  -webkit-backdrop-filter: url("#lg-refraction") blur(24px) saturate(170%);
+}
+
+@supports not (backdrop-filter: url("#lg-refraction")) {
+  .lg-refract {
+    backdrop-filter: blur(24px) saturate(170%);
+    -webkit-backdrop-filter: blur(24px) saturate(170%);
+  }
 }
 
 /* ===== Window ===== */
